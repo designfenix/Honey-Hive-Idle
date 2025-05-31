@@ -1,0 +1,29 @@
+"/* ----------------- COMPONENTE: UpgradeBar ----------------- */
+
+.upgrade-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--dark-panel);
+  border-top: 4px solid #ffd64a;
+  padding: 0.5rem 0;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 20;
+  opacity: 0; /* Aparece con JS cuando carga todo */
+
+  /* Scrollbar personalizado */
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 196, 0, 0.7);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}

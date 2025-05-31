@@ -1,0 +1,73 @@
+"/* ----------------- COMPONENTE: Header (ResourceBar) ----------------- */
+
+/* Barra de recursos fija en la parte superior */
+.app-header {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark-panel);
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  gap: 2rem;
+  color: var(--text-light);
+  z-index: 10;
+  box-shadow: none;
+  opacity: 0; /* Se animará desde JS una vez cargue todo */
+}
+
+/* Contenedor de recursos (pollen, nectar, speed) */
+.resources {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Cada recurso individual */
+.resource {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+
+  /* Ícono dentro de cada recurso */
+  .icon {
+    font-size: 1.2rem;
+    margin-right: 0.25rem;
+  }
+  /* Valor numérico del recurso */
+  .value {
+    font-weight: bold;
+    color: var(--text-light);
+  }
+  /* El recurso “speed” muestra % al lado */
+  &.speed .value::after {
+    content: "%";
+    margin-left: 0.1rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Botón para controlar música en header (sprite) */
+#music-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: block;
+  width: var(--sound-control-sprite-size);
+  height: var(--sound-control-sprite-size);
+  outline: none;
+  border: 0;
+  background: var(--sound-control-sprite) 0 0 no-repeat;
+  background-size: var(--sound-control-sprite-size);
+  transition: ease transform 0.3s;
+  z-index: 101;
+
+  /* Al hacer hover, escalamos un poco */
+  &:hover {
+    transform: scale(1.1);
+  }
+  /* Cuando está en estado “silence”, cambiamos la posición del sprite */
+  &.silence {
+    background-position: 0 calc(var(--sound-control-sprite-size) * -1);
+  }
+}

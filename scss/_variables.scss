@@ -1,0 +1,16 @@
+"/* ----------------- VARIABLES GLOBALES ----------------- */
+:root {
+  /* Colores principales */
+  --dark-panel: #2d1d2c;
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --accent: #f1c40f;
+  --accent-hover: #e67e22;
+  --text-light: #ffffff;
+
+  /* Tipografía */
+  --font-family: "Segoe UI", sans-serif;
+
+  /* Ruta sprite sonido (sound-toggle) */
+  --sound-control-sprite: url("https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/sound-control.png");
+  --sound-control-sprite-size: 64px;
+}

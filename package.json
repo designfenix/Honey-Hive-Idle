@@ -1,0 +1,16 @@
+{
+  "name": "honey-hive-idle",
+  "version": "1.0.0",
+  "description": "Idle game Honey Hive Idle - Three.js + GSAP + SCSS modular",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=8080",
+    "build-css": "sass scss/main.scss css/main.css --no-source-map"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "sass": "^1.64.0"
+  },
+  "author": "designfenix",
+  "license": "MIT"
+}

@@ -1,0 +1,20 @@
+"/* ----------------- MIXINS Y FUNCIONES ----------------- */
+
+/* Ejemplo de mixin para media query (preparado para usarse) */
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == small {
+    @media (max-width: 600px) { @content; }
+  } @else if $breakpoint == medium {
+    @media (min-width: 601px) and (max-width: 1024px) { @content; }
+  } @else if $breakpoint == large {
+    @media (min-width: 1025px) { @content; }
+  }
+}
+
+/* Mixin para centrar elementos absoluta/relativamente */
+@mixin center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

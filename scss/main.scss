@@ -1,0 +1,26 @@
+"/* ----------------- SCSS PRINCIPAL ----------------- */
+
+/* 1. Variables globales */
+@import "variables";
+
+/* 2. Mixins y funciones */
+@import "mixins";
+
+/* 3. Reset y estilos base */
+@import "base";
+
+/* 4. Layout general (contenedor, main, scrollbar global) */
+@import "layout";
+
+/* 5. Componentes individuales */
+@import "components/header";
+@import "components/intro-screen";
+@import "components/loading-screen";
+@import "components/scene-container";
+@import "components/upgrade-bar";
+@import "components/upgrade-card";
+/* (Opcional) Si separaste sound-toggle: */
+// @import "components/sound-toggle";
+
+/* 6. Aquí podrías añadir utilidades adicionales, si las hubieras creado */
+// @import "utilities";

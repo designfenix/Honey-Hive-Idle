@@ -1,0 +1,29 @@
+"/* ----------------- ESTILOS DE LAYOUT GENERAL ----------------- */
+
+/* Contenedor principal de la aplicación */
+.colmena-app {
+  opacity: 0; /* La app arrancará invisible y luego se hará fade-in desde JS */
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Contenido principal: Header + Main */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Para custom scrollbars en el upgrade-bar (global) */
+::-webkit-scrollbar {
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 196, 0, 0.7);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
