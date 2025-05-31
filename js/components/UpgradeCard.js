@@ -21,13 +21,11 @@ export class UpgradeCard {
     this.upgradeType = element.dataset.upgrade; // "contratar", "avispa", "produccion" o "mejorar-colmena"
     this.onClickCallback = onClickCallback;
 
-    // Buscamos internamente el <button> y el <span> de coste y valor (si existe)
-    this.button = element.querySelector(".btn-purchase");
     this.costEl = element.querySelector(".cost span:not(.icon)"); // el <span> que contiene el número
     this.valueEl = element.querySelector(".count span"); // solo existe en abeja/avispa
 
     // Listener al botón de compra
-    this.button.addEventListener("click", () => {
+    this.element.addEventListener("click", () => {
       if (typeof this.onClickCallback === "function") {
         this.onClickCallback(this.upgradeType);
       }
@@ -55,6 +53,10 @@ export class UpgradeCard {
     }
 
     // Habilitamos/deshabilitamos el botón
-    this.button.disabled = !canAfford;
+    if(canAfford){
+      this.element.classList.remove('disabled');
+    }else{
+      this.element.classList.add('disabled');
+    }
   }
 }

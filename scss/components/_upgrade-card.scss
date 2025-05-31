@@ -7,28 +7,40 @@
 */
 
 .upgrade-card {
-  background: var(--card-bg);
-  border-radius: 0.75rem;
+  background: var(--darl-panel);
   flex: 0 0 auto;
-  width: 300px;
+  width: 180px;
   padding: 1rem;
-  flex-direction: row;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   color: var(--text-light);
   position: relative;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
-
+  box-shadow: inset 0 0 0 5px #4b3748, 0 2px 4px  0 #251a2b;
+  
+  
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: #4b3748;
+  }
+
+  &.disabled{
+    opacity: 0.3;
+    pointer-events: none;;
   }
 
   /* Ícono grande de la tarjeta de upgrade */
-  .icon {
-    font-size: 1.5rem;
+  & > .icon {
+    width: 32px;
     color: var(--accent);
     margin-bottom: 0.25rem;
-    text-align: center;
+    margin: 0 auto;;
+    img{
+      max-width: 100%;
+      height: auto;
+    }
   }
 
   .info {
@@ -36,16 +48,18 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    text-shadow: 0 2px 0 black;
 
     h2 {
       font-size: 12px;
+      line-height: 180%;
       margin-bottom: 0;
-      color: var(--text-light);
+      color: var(--text-white);
       text-align: center;
     }
     .description {
       font-size: 10px;
-      color: #ddd;
+      color: var(--text-light);
       text-align: center;
     }
     .effect {
@@ -60,11 +74,14 @@
       font-size: 14px;
       gap: 0.25rem;
       color: var(--accent);
-      margin-top: 0.25rem;
+      margin-top: auto;
 
       .icon {
-        font-size: 1.1rem;
+        width: 32px;
         margin-right: 0.25rem;
+        img{
+          width: 100%;
+        }
       }
     }
 

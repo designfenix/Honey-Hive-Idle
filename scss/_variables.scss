@@ -1,16 +1,18 @@
 /* ----------------- VARIABLES GLOBALES ----------------- */
 :root {
   /* Colores principales */
-  --dark-panel: #2d1d2c;
-  --card-bg: rgba(255, 255, 255, 0.1);
+  --dark-panel: #37263b;
+  --card-bg: rgb(255, 255, 255, 0.1);
+  --carg-shadow: rgb(45, 32, 49);
   --accent: #f1c40f;
   --accent-hover: #e67e22;
-  --text-light: #ffffff;
+  --text-white: #fff;
+  --text-light: #93d691;
 
   /* Tipografía */
   --font-family: "Press Start 2P", system-ui;
 
   /* Ruta sprite sonido (sound-toggle) */
   --sound-control-sprite: url("/assets/images/sound-control.png");
-  --sound-control-sprite-size: 64px;
+  --sound-control-sprite-size: 32px;
 }

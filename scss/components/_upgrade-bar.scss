@@ -7,15 +7,22 @@
   width: 100%;
   background: var(--dark-panel);
   border-top: 4px solid #ffd64a;
-  padding: 0.5rem 0;
+  padding: 0.5rem;
   z-index: 20;
   transform: translateY(100%); // inicialmente “oculto” fuera de la pantalla
   transition: transform 0.4s ease;  // animación de subida/bajada
   opacity: 0;
+  padding-top: 25px;
 
   /* Si la clase .open está presente, la elevamos a bottom: 0 */
   &.open {
     transform: translateY(0%);
+    .upgrade-toggle {
+      transform: translateX(-50%) translateY(-70%);
+      &:before{
+        transform: rotate(-45deg);
+      }
+    }
   }
   .content-scroll{
     display: flex;
@@ -46,13 +53,24 @@
   transform: translateX(-50%) translateY(-100%); // inicialmente “oculto” dentro del upgrade-bar, lo elevaremos con JS
   background: var(--accent);
   border: none;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  display:flex;
+  border-radius: 8px;
+  padding: 10px 18px;
+  align-items:center;
+  justify-content: center;
   font-size: 1.25rem;
   color: #222;
   transition: transform 0.4s ease, background 0.2s ease;
-
+  &:before{
+    content:'';
+    border-left:8px solid var(--dark-panel);
+    border-bottom:8px solid var(--dark-panel);
+    display:block;
+    width: 8px;
+    height: 8px;
+    transform: rotate(-225deg);
+    transition: transform 0.4s ease;
+  }
 
   &:hover {
     background: var(--accent-hover);

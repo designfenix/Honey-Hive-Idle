@@ -23,13 +23,10 @@ export class UpgradeToggle {
       this.upgradeBar.classList.add("open");
       this.toggleBtn.setAttribute("aria-expanded", "true");
       this.toggleBtn.setAttribute("aria-label", "Ocultar mejoras");
-      // Cambiar el ícono si quieres, por ejemplo a '⬇️'
-      this.toggleBtn.textContent = "⬇️";
     } else {
       this.upgradeBar.classList.remove("open");
       this.toggleBtn.setAttribute("aria-expanded", "false");
       this.toggleBtn.setAttribute("aria-label", "Mostrar mejoras");
-      this.toggleBtn.textContent = "⬆️";
     }
   }
 }

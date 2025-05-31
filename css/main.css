@@ -4,16 +4,18 @@
 /* ----------------- VARIABLES GLOBALES ----------------- */
 :root {
   /* Colores principales */
-  --dark-panel: #2d1d2c;
-  --card-bg: rgba(255, 255, 255, 0.1);
+  --dark-panel: #37263b;
+  --card-bg: rgb(255, 255, 255, 0.1);
+  --carg-shadow: rgb(45, 32, 49);
   --accent: #f1c40f;
   --accent-hover: #e67e22;
-  --text-light: #ffffff;
+  --text-white: #fff;
+  --text-light: #93d691;
   /* Tipografía */
   --font-family: "Press Start 2P", system-ui;
   /* Ruta sprite sonido (sound-toggle) */
   --sound-control-sprite: url("/assets/images/sound-control.png");
-  --sound-control-sprite-size: 64px;
+  --sound-control-sprite-size: 32px;
 }
 
 /* 2. Mixins y funciones */
@@ -80,15 +82,15 @@ button:hover {
 /* Barra de recursos fija en la parte superior */
 .app-header {
   position: absolute;
-  top: 1rem;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   background: var(--dark-panel);
-  border-radius: 1rem;
+  border-radius: 12px;
   padding: 0.5rem 1rem;
   display: flex;
   gap: 2rem;
-  color: var(--text-light);
+  color: var(--text-white);
   z-index: 10;
   box-shadow: none;
   opacity: 0; /* Se animará desde JS una vez cargue todo */
@@ -110,12 +112,16 @@ button:hover {
   /* El recurso “speed” muestra % al lado */
 }
 .resource .icon {
-  font-size: 1.2rem;
+  width: 24px;
   margin-right: 0.25rem;
+}
+.resource .icon img {
+  width: 100%;
 }
 .resource .value {
   font-weight: bold;
-  color: var(--text-light);
+  color: var(--text-white);
+  text-shadow: 0 2px 0 black;
 }
 .resource.speed .value::after {
   content: "%";
@@ -248,15 +254,22 @@ button:hover {
   width: 100%;
   background: var(--dark-panel);
   border-top: 4px solid #ffd64a;
-  padding: 0.5rem 0;
+  padding: 0.5rem;
   z-index: 20;
   transform: translateY(100%);
   transition: transform 0.4s ease;
   opacity: 0;
+  padding-top: 25px;
   /* Si la clase .open está presente, la elevamos a bottom: 0 */
 }
 .upgrade-bar.open {
   transform: translateY(0%);
+}
+.upgrade-bar.open .upgrade-toggle {
+  transform: translateX(-50%) translateY(-70%);
+}
+.upgrade-bar.open .upgrade-toggle:before {
+  transform: rotate(-45deg);
 }
 .upgrade-bar .content-scroll {
   display: flex;
@@ -285,12 +298,24 @@ button:hover {
   transform: translateX(-50%) translateY(-100%);
   background: var(--accent);
   border: none;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  display: flex;
+  border-radius: 8px;
+  padding: 10px 18px;
+  align-items: center;
+  justify-content: center;
   font-size: 1.25rem;
   color: #222;
   transition: transform 0.4s ease, background 0.2s ease;
+}
+.upgrade-toggle:before {
+  content: "";
+  border-left: 8px solid var(--dark-panel);
+  border-bottom: 8px solid var(--dark-panel);
+  display: block;
+  width: 8px;
+  height: 8px;
+  transform: rotate(-225deg);
+  transition: transform 0.4s ease;
 }
 .upgrade-toggle:hover {
   background: var(--accent-hover);
@@ -303,43 +328,55 @@ button:hover {
   - info: texto, título, descripción, costo, botón y contador
 */
 .upgrade-card {
-  background: var(--card-bg);
-  border-radius: 0.75rem;
+  background: var(--darl-panel);
   flex: 0 0 auto;
-  width: 300px;
+  width: 180px;
   padding: 1rem;
-  flex-direction: row;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   color: var(--text-light);
   position: relative;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: inset 0 0 0 5px #4b3748, 0 2px 4px 0 #251a2b;
   /* Ícono grande de la tarjeta de upgrade */
 }
 .upgrade-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: #4b3748;
 }
-.upgrade-card .icon {
-  font-size: 1.5rem;
+.upgrade-card.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+.upgrade-card > .icon {
+  width: 32px;
   color: var(--accent);
   margin-bottom: 0.25rem;
-  text-align: center;
+  margin: 0 auto;
+}
+.upgrade-card > .icon img {
+  max-width: 100%;
+  height: auto;
 }
 .upgrade-card .info {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  text-shadow: 0 2px 0 black;
 }
 .upgrade-card .info h2 {
   font-size: 12px;
+  line-height: 180%;
   margin-bottom: 0;
-  color: var(--text-light);
+  color: var(--text-white);
   text-align: center;
 }
 .upgrade-card .info .description {
   font-size: 10px;
-  color: #ddd;
+  color: var(--text-light);
   text-align: center;
 }
 .upgrade-card .info .effect {
@@ -354,11 +391,14 @@ button:hover {
   font-size: 14px;
   gap: 0.25rem;
   color: var(--accent);
-  margin-top: 0.25rem;
+  margin-top: auto;
 }
 .upgrade-card .info .cost .icon {
-  font-size: 1.1rem;
+  width: 32px;
   margin-right: 0.25rem;
+}
+.upgrade-card .info .cost .icon img {
+  width: 100%;
 }
 .upgrade-card .info .btn-purchase {
   margin-top: auto;

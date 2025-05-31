@@ -3,15 +3,15 @@
 /* Barra de recursos fija en la parte superior */
 .app-header {
   position: absolute;
-  top: 1rem;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   background: var(--dark-panel);
-  border-radius: 1rem;
+  border-radius: 12px;
   padding: 0.5rem 1rem;
   display: flex;
   gap: 2rem;
-  color: var(--text-light);
+  color: var(--text-white);
   z-index: 10;
   box-shadow: none;
   opacity: 0; /* Se animará desde JS una vez cargue todo */
@@ -31,13 +31,17 @@
 
   /* Ícono dentro de cada recurso */
   .icon {
-    font-size: 1.2rem;
+    width: 24px;
     margin-right: 0.25rem;
+    img{
+      width: 100%;
+    }
   }
   /* Valor numérico del recurso */
   .value {
     font-weight: bold;
-    color: var(--text-light);
+    color: var(--text-white);
+    text-shadow: 0 2px 0 black;
   }
   /* El recurso “speed” muestra % al lado */
   &.speed .value::after {

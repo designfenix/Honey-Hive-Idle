@@ -41,15 +41,15 @@
     <header class="app-header">
       <div class="resources">
         <div class="resource pollen">
-          <span class="icon">🔮</span>
+          <span class="icon"><img src="assets/images/icon-polen.png" alt="Polen"></span>
           <span class="value" id="pollen-value">0</span>
         </div>
         <div class="resource nectar">
-          <span class="icon">🍯</span>
+          <span class="icon"><img src="assets/images/icon-nectar.png" alt="Nectar"></span>
           <span class="value" id="nectar-value">0</span>
         </div>
         <div class="resource speed">
-          <span class="icon">⚡</span>
+          <span class="icon"><img src="assets/images/icon-energy.png" alt="Energy"></span>
           <span class="value" id="speed-value">100</span><small></small>
         </div>
       </div>
@@ -62,54 +62,49 @@
       </div>
       <div class="upgrade-bar open">
         <button class="upgrade-toggle" aria-expanded="false" aria-label="Mostrar mejoras">
-          ⬇️
         </button>
         <div class="content-scroll">
           <div class="upgrade-card" data-upgrade="contratar">
-            <div class="icon">🐝</div>
+            <div class="icon"><img src="assets/images/icon-bee.png" alt="Abeja"></div>
             <div class="info">
               <h2>Contratar Abeja</h2>
               <p class="description">Genera 1 pólen/s</p>
               <div class="cost">
-                <span class="icon">🔮</span>
+                <span class="icon"><img src="assets/images/icon-polen.png" alt="Polen"></span>
                 <span id="bee-cost">0</span>
               </div>
-              <button class="btn-purchase" id="btn-hire">Comprar</button>
               <div class="count">Cantidad: <span id="bee-value">0</span></div>
             </div>
           </div>
           <div class="upgrade-card" data-upgrade="avispa">
-            <div class="icon">🦟</div>
+            <div class="icon"><img src="assets/images/icon-wasp.png" alt="Avispa"></div>
             <div class="info">
               <h2>Contratar Avispa</h2>
               <p class="description">Genera 1.5 pólen/s</p>
               <div class="cost">
-                <span class="icon">🔮</span>
+                <span class="icon"><img src="assets/images/icon-polen.png" alt="Polen"></span>
                 <span id="wasp-cost">0</span>
               </div>
-              <button class="btn-purchase" id="btn-hire-wasp">Comprar</button>
               <div class="count">Cantidad: <span id="wasp-value">0</span></div>
             </div>
           </div>
           <div class="upgrade-card" data-upgrade="produccion">
-            <div class="icon">➕</div>
+            <div class="icon"><img src="assets/images/icon-energy.png" alt="Energy"></div>
             <div class="info">
               <h2>Mejorar Producción</h2>
               <div class="effect">+<span id="prod-value">0</span>% / abeja</div>
-              <p class="cost"><span class="icon">🍯</span> <span id="prod-cost">0</span></p>
-              <button class="btn-purchase" id="btn-prod">Comprar</button>
+              <p class="cost"><span class="icon"><img src="assets/images/icon-nectar.png" alt="Nectar"></span> <span id="prod-cost">0</span></p>
             </div>
           </div>
           <div class="upgrade-card" data-upgrade="mejorar-colmena">
-            <div class="icon">⚡</div>
+            <div class="icon"><img src="assets/images/icon-energy.png" alt="Energy"></div>
             <div class="info">
               <h2>Mejorar Colmena</h2>
               <p class="description">+<span id="hive-speed">0</span>% velocidad</p>
               <div class="cost">
-                <span class="icon">🍯</span>
+                <span class="icon"><img src="assets/images/icon-nectar.png" alt="Nectar"></span>
                 <span id="hive-cost">0</span>
               </div>
-              <button class="btn-purchase" id="btn-hive">Comprar</button>
             </div>
           </div>
         </div>
