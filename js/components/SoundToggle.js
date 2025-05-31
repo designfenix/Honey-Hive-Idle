@@ -15,7 +15,7 @@ export class SoundToggle {
     this.musicOn = true;
 
     // Creamos el botón y lo anexamos al body
-    this.musicBtn = createElement("button", { id: "music-toggle", textContent: "🔇" }, document.body);
+    this.musicBtn = createElement("button", { id: "music-toggle" }, document.body);
 
     // Listener para alternar música
     this.musicBtn.addEventListener("click", () => {

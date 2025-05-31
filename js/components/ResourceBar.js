@@ -36,6 +36,6 @@ export class ResourceBar {
     this.waspEl.textContent = formatNumber(waspsCount);
     this.pollenEl.textContent = formatNumber(Math.floor(pollen));
     this.nectarEl.textContent = formatNumber(Math.floor(nectar));
-    this.speedEl.textContent = formatNumber(Math.round(speedPercent)) + "%";
+    this.speedEl.textContent = formatNumber(Math.round(speedPercent));
   }
 }

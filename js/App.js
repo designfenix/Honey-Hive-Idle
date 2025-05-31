@@ -9,6 +9,7 @@ import { UpgradeCard } from "./components/UpgradeCard.js";
 import { ThreeScene } from "./three/ThreeScene.js";
 import { GameManager } from "./GameManager.js";
 import { getElement } from "./utils/domHelper.js";
+import { UpgradeToggle } from "./components/UpgradeToggle.js";
 import gsap from "https://esm.sh/gsap";
 /**
  * Clase principal que orquesta el flujo completo:
@@ -20,6 +21,9 @@ import gsap from "https://esm.sh/gsap";
 class App {
   constructor(rootSelector) {
     this.rootEl = getElement(rootSelector);
+    this.sceneContainer = getElement(".scene-container");
+
+    this.upgradeToggle = new UpgradeToggle();
 
     // 1) Inicializamos pantalla de carga
     this.loadingScreen = new LoadingScreen();
@@ -45,8 +49,8 @@ class App {
         this.assets = assets;
 
         // 4) Inicializamos ThreeScene
-        const sceneContainer = getElement(".scene-container");
-        this.threeScene = new ThreeScene(sceneContainer, this.assets, (delta) =>
+        
+        this.threeScene = new ThreeScene(this.sceneContainer, this.assets, (delta) =>
           this.gameManager.productionLoop(delta)
         );
 
@@ -91,8 +95,8 @@ class App {
     const upgradeBarEl = getElement(".upgrade-bar");
     gsap.fromTo(
       upgradeBarEl,
-      { y: 400, opacity: 0 },
-      { y: 0, opacity: 1, duration: 2 }
+      { opacity: 0 },
+      { opacity: 1, display: "flex",duration: 2 }
     );
 
     // Mostramos header

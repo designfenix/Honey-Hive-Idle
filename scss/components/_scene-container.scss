@@ -3,7 +3,7 @@
 .scene-container {
   flex: 1;
   position: relative;
-  padding-bottom: 120px; /* Dejamos espacio para la upgrade-bar fija abajo */
+  height: 100%;
 }
 
 /* El canvas de Three.js debe ocupar todo su contenedor */

@@ -1,29 +1,60 @@
-/* ----------------- COMPONENTE: UpgradeBar ----------------- */
+/* ----------------- COMPONENTE: UpgradeBar con pestaña ----------------- */
 
 .upgrade-bar {
   position: fixed;
-  bottom: 0;
+  bottom: 0;           // parte “oculta” (ajusta -200px al alto de tu barra)
   left: 0;
   width: 100%;
   background: var(--dark-panel);
   border-top: 4px solid #ffd64a;
   padding: 0.5rem 0;
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  overflow-y: hidden;
   z-index: 20;
-  opacity: 0; /* Aparece con JS cuando carga todo */
+  transform: translateY(100%); // inicialmente “oculto” fuera de la pantalla
+  transition: transform 0.4s ease;  // animación de subida/bajada
+  opacity: 0;
 
-  /* Scrollbar personalizado */
-  &::-webkit-scrollbar {
-    height: 8px;
+  /* Si la clase .open está presente, la elevamos a bottom: 0 */
+  &.open {
+    transform: translateY(0%);
   }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 196, 0, 0.7);
-    border-radius: 4px;
+  .content-scroll{
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    /* Scrollbar personalizado */
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 196, 0, 0.7);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
+}
+
+/* ----------------- Pestaña (toggle) ----------------- */
+.upgrade-toggle {
+  position: absolute;
+  top: 0;                         // pegado al fondo de la ventana
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%); // inicialmente “oculto” dentro del upgrade-bar, lo elevaremos con JS
+  background: var(--accent);
+  border: none;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  color: #222;
+  transition: transform 0.4s ease, background 0.2s ease;
+
+
+  &:hover {
+    background: var(--accent-hover);
   }
 }

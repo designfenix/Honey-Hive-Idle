@@ -10,9 +10,9 @@
   --accent-hover: #e67e22;
   --text-light: #ffffff;
   /* Tipografía */
-  --font-family: "Segoe UI", sans-serif;
+  --font-family: "Press Start 2P", system-ui;
   /* Ruta sprite sonido (sound-toggle) */
-  --sound-control-sprite: url("https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/sound-control.png");
+  --sound-control-sprite: url("/assets/images/sound-control.png");
   --sound-control-sprite-size: 64px;
 }
 
@@ -230,7 +230,7 @@ button:hover {
 .scene-container {
   flex: 1;
   position: relative;
-  padding-bottom: 120px; /* Dejamos espacio para la upgrade-bar fija abajo */
+  height: 100%;
 }
 
 /* El canvas de Three.js debe ocupar todo su contenedor */
@@ -240,7 +240,7 @@ button:hover {
   display: block;
 }
 
-/* ----------------- COMPONENTE: UpgradeBar ----------------- */
+/* ----------------- COMPONENTE: UpgradeBar con pestaña ----------------- */
 .upgrade-bar {
   position: fixed;
   bottom: 0;
@@ -249,23 +249,51 @@ button:hover {
   background: var(--dark-panel);
   border-top: 4px solid #ffd64a;
   padding: 0.5rem 0;
+  z-index: 20;
+  transform: translateY(100%);
+  transition: transform 0.4s ease;
+  opacity: 0;
+  /* Si la clase .open está presente, la elevamos a bottom: 0 */
+}
+.upgrade-bar.open {
+  transform: translateY(0%);
+}
+.upgrade-bar .content-scroll {
   display: flex;
   gap: 1rem;
+  width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  z-index: 20;
-  opacity: 0; /* Aparece con JS cuando carga todo */
   /* Scrollbar personalizado */
 }
-.upgrade-bar::-webkit-scrollbar {
+.upgrade-bar .content-scroll::-webkit-scrollbar {
   height: 8px;
 }
-.upgrade-bar::-webkit-scrollbar-thumb {
+.upgrade-bar .content-scroll::-webkit-scrollbar-thumb {
   background-color: rgba(255, 196, 0, 0.7);
   border-radius: 4px;
 }
-.upgrade-bar::-webkit-scrollbar-track {
+.upgrade-bar .content-scroll::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* ----------------- Pestaña (toggle) ----------------- */
+.upgrade-toggle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  background: var(--accent);
+  border: none;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  color: #222;
+  transition: transform 0.4s ease, background 0.2s ease;
+}
+.upgrade-toggle:hover {
+  background: var(--accent-hover);
 }
 
 /* ----------------- COMPONENTE: UpgradeCard ----------------- */
@@ -278,10 +306,9 @@ button:hover {
   background: var(--card-bg);
   border-radius: 0.75rem;
   flex: 0 0 auto;
-  width: 200px;
+  width: 300px;
   padding: 1rem;
-  display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
   color: var(--text-light);
   position: relative;
@@ -305,18 +332,18 @@ button:hover {
   gap: 0.3rem;
 }
 .upgrade-card .info h2 {
-  font-size: 1rem;
+  font-size: 12px;
   margin-bottom: 0;
   color: var(--text-light);
   text-align: center;
 }
 .upgrade-card .info .description {
-  font-size: 0.85rem;
+  font-size: 10px;
   color: #ddd;
   text-align: center;
 }
 .upgrade-card .info .effect {
-  font-size: 0.8rem;
+  font-size: 10px;
   color: var(--text-light);
   text-align: center;
 }
@@ -324,7 +351,7 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 14px;
   gap: 0.25rem;
   color: var(--accent);
   margin-top: 0.25rem;
@@ -354,7 +381,7 @@ button:hover {
 }
 .upgrade-card .info .count {
   margin-top: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 10px;
   color: #f1c40f;
   text-align: center;
 }

@@ -676,11 +676,10 @@ export class ThreeScene {
   // 21. Ajustar tamaño al cambiar ventana
   // -----------------------------------
   _onResize() {
-    const w = this.containerEl.clientWidth;
-    const h = this.containerEl.clientHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h, false);
-    this.composer.setSize(w, h);
   }
 }

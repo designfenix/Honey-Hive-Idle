@@ -10,10 +10,9 @@
   background: var(--card-bg);
   border-radius: 0.75rem;
   flex: 0 0 auto;
-  width: 200px;
+  width: 300px;
   padding: 1rem;
-  display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
   color: var(--text-light);
   position: relative;
@@ -39,18 +38,18 @@
     gap: 0.3rem;
 
     h2 {
-      font-size: 1rem;
+      font-size: 12px;
       margin-bottom: 0;
       color: var(--text-light);
       text-align: center;
     }
     .description {
-      font-size: 0.85rem;
+      font-size: 10px;
       color: #ddd;
       text-align: center;
     }
     .effect {
-      font-size: 0.8rem;
+      font-size: 10px;
       color: var(--text-light);
       text-align: center;
     }
@@ -58,7 +57,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 14px;
       gap: 0.25rem;
       color: var(--accent);
       margin-top: 0.25rem;
@@ -92,7 +91,7 @@
 
     .count {
       margin-top: 0.5rem;
-      font-size: 0.85rem;
+      font-size: 10px;
       color: #f1c40f;
       text-align: center;
 
