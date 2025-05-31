@@ -1,4 +1,4 @@
-"// js/three/ThreeScene.js
+// js/three/ThreeScene.js
 
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { OrbitControls } from "https://esm.sh/three@0.174.0/examples/jsm/controls/OrbitControls.js";
@@ -9,6 +9,8 @@ import { ShaderPass } from "https://esm.sh/three@0.174.0/examples/jsm/postproces
 import { GammaCorrectionShader } from "https://esm.sh/three@0.174.0/examples/jsm/shaders/GammaCorrectionShader.js";
 import { PMREMGenerator, HalfFloatType } from "https://esm.sh/three@0.174.0";
 import Stats from "https://esm.sh/stats.js@0.17.0";
+import gsap from "https://esm.sh/gsap@3.13.0";
+
 
 // Parámetros estáticos de ThreeScene
 const FOG_COLOR = 0x355e54;
@@ -19,8 +21,7 @@ export class ThreeScene {
   /**
    * @param {Element} containerEl - contenedor que envuelve el <canvas> (#three-canvas).
    * @param {Object} assets - objeto con todos los assets cargados en AssetService.
-   * @param {Function} onBeforeRender - callback que se ejecuta cada frame antes de renderizar 
-   *                                    (ideales para actualizar lógica externa, p. ej. GameManager).
+   * @param {Function} onBeforeRender - callback que se ejecuta cada frame antes de renderizar.
    */
   constructor(containerEl, assets, onBeforeRender) {
     this.containerEl = containerEl;
@@ -30,14 +31,31 @@ export class ThreeScene {
     // Tres.js clock
     this.clock = new THREE.Clock();
 
-    // Configuración inicial de la escena
+    // Parámetro dinámico para velocidad de colmena (se reasigna desde GameManager)
+    this.hiveSpeedMultiplierFunc = () => 1;
+
+    // 1. Inicializar renderer y canvas
     this._initRenderer();
+
+    // 2. Configurar escena y niebla
     this._initScene();
+
+    // 3. Configurar cámara y controles
     this._initCameraAndControls();
+
+    // 4. Configurar post-proceso
     this._initPostProcessing();
+
+    // 5. Configurar AudioListener y audio
     this._initAudioListener();
+
+    // 6. Configurar luces
     this._initLights();
+
+    // 7. Configurar entorno (HDR o color de fondo)
     this._initEnvironment();
+
+    // 8. Configurar objetos del suelo, bosque, rocas, vegetación, colmena y bees mixer
     this._initGround();
     this._initForest();
     this._initRock();
@@ -45,19 +63,19 @@ export class ThreeScene {
     this._initHive();
     this._initBeesMixer();
 
-    // Stats
+    // 9. Stats (FPS)
     this.stats = new Stats();
     document.body.appendChild(this.stats.dom);
 
-    // Resize handling
+    // 10. Resize handling
     window.addEventListener("resize", () => this._onResize());
   }
 
-  // -------------------------
-  //  1. Configuración del renderer y canvas
-  // -------------------------
+  // -----------------------------------
+  // 1. Configuración del renderer y canvas
+  // -----------------------------------
   _initRenderer() {
-    const canvas = document.querySelector("#three-canvas");
+    const canvas = this.containerEl.querySelector("#three-canvas");
     this.renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
@@ -72,21 +90,22 @@ export class ThreeScene {
     this.renderer.physicallyCorrectLights = true;
   }
 
-  // -------------------------
-  //  2. Escena y niebla
-  // -------------------------
+  // -----------------------------------
+  // 2. Escena y niebla
+  // -----------------------------------
   _initScene() {
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.Fog(FOG_COLOR, FOG_NEAR, FOG_FAR);
   }
 
-  // -------------------------
-  //  3. Cámara, posición y controles
-  // -------------------------
+  // -----------------------------------
+  // 3. Cámara, posición y controles
+  // -----------------------------------
   _initCameraAndControls() {
-    const aspect = this.containerEl.clientWidth / this.containerEl.clientHeight;
+    const aspect =
+      this.containerEl.clientWidth / this.containerEl.clientHeight;
     this.camera = new THREE.PerspectiveCamera(65, aspect, 0.1, 100);
-    // Posición inicial lejana, se moverá en _playGame()
+    // Posición inicial alejada; luego se moverá en playGameAnimation()
     this.camera.position.set(-1.12, 20.5, 10);
     this.camera.rotation.set(-0.01, 10.23, 0);
     this.camera.zoom = 1;
@@ -99,9 +118,9 @@ export class ThreeScene {
     this.controls.maxPolarAngle = Math.PI / 2;
   }
 
-  // -------------------------
-  //  4. Post-processing (RenderPass, Bokeh, Gamma)
-  // -------------------------
+  // -----------------------------------
+  // 4. Post-processing (RenderPass, Bokeh, Gamma)
+  // -----------------------------------
   _initPostProcessing() {
     this.composer = new EffectComposer(this.renderer);
     const renderPass = new RenderPass(this.scene, this.camera);
@@ -121,9 +140,9 @@ export class ThreeScene {
     this.composer.addPass(gammaPass);
   }
 
-  // -------------------------
-  //  5. AudioListener + música y SFX
-  // -------------------------
+  // -----------------------------------
+  // 5. AudioListener + música y SFX
+  // -----------------------------------
   _initAudioListener() {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
@@ -133,7 +152,6 @@ export class ThreeScene {
     this.music.setBuffer(this.assets.musicBuffer);
     this.music.setLoop(true);
     this.music.setVolume(0.2);
-    this.music.play();
 
     // SFX: plop, abeja, avispa
     this.plopSound = new THREE.Audio(this.listener);
@@ -149,9 +167,15 @@ export class ThreeScene {
     this.waspSound.setVolume(1);
   }
 
-  // -------------------------
-  //  6. Luces básicas: hemi + directional
-  // -------------------------
+  startMusic() {
+    if (this.music && !this.music.isPlaying) {
+      this.music.play();
+    }
+  }
+
+  // -----------------------------------
+  // 6. Luces básicas: Hemisphere + Directional
+  // -----------------------------------
   _initLights() {
     const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
     this.scene.add(hemi);
@@ -170,9 +194,9 @@ export class ThreeScene {
     this.scene.add(sun);
   }
 
-  // -------------------------
-  //  7. Environment (HDR) o color de fondo
-  // -------------------------
+  // -----------------------------------
+  // 7. Environment (HDR) o color de fondo
+  // -----------------------------------
   _initEnvironment() {
     const pmremGenerator = new PMREMGenerator(this.renderer);
     pmremGenerator.compileEquirectangularShader();
@@ -192,9 +216,9 @@ export class ThreeScene {
     }
   }
 
-  // -------------------------
-  //  8. Suelo con textura de césped
-  // -------------------------
+  // -----------------------------------
+  // 8. Suelo con textura de césped
+  // -----------------------------------
   _initGround() {
     const size = 800;
     const tileSize = 50;
@@ -220,6 +244,443 @@ export class ThreeScene {
     this.scene.add(mesh);
   }
 
-  # Additional files omitted due to message length constraints
-}
+  // -----------------------------------
+  // 9. Crear bosque de árboles
+  // -----------------------------------
+  _initForest() {
+    const trunkMat = new THREE.MeshStandardMaterial({
+      color: 0x553a30,
+      flatShading: true,
+    });
+    const leavesMat = new THREE.MeshStandardMaterial({
+      color: 0x4a7247,
+      flatShading: true,
+    });
+    const treeCount = 500;
+    const rMin = 8,
+      rMax = 16;
 
+    for (let i = 0; i < treeCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = THREE.MathUtils.lerp(rMin, rMax, Math.random());
+      const tree = new THREE.Group();
+
+      // Tronco
+      const trunkHeight = 1 + Math.random() * 3;
+      const trunkGeo = new THREE.CylinderGeometry(
+        0.3,
+        0.3,
+        trunkHeight,
+        trunkHeight * 2
+      );
+      const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+      trunk.position.y = trunkHeight / 2;
+      trunk.castShadow = true;
+      tree.add(trunk);
+
+      // Hojas en forma de conos
+      const baseLeavesHeight = trunkHeight * 0.8;
+      const baseLeavesRadius = trunkHeight * 0.5;
+      const crownCount = 2 + Math.floor(Math.random() * 2);
+      for (let j = 0; j < crownCount; j++) {
+        const sizeFactor = 1 - j * 0.2;
+        const leavesHeight = baseLeavesHeight * sizeFactor;
+        const leavesRadius = baseLeavesRadius * sizeFactor;
+        const leavesGeo = new THREE.ConeGeometry(leavesRadius, leavesHeight, 6);
+        const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+
+        const yOffset =
+          trunkHeight +
+          baseLeavesHeight * j * 0.6 +
+          leavesHeight / 2;
+        leaves.position.y = yOffset;
+        leaves.castShadow = true;
+        tree.add(leaves);
+      }
+
+      tree.position.set(
+        Math.cos(angle) * radius,
+        0,
+        Math.sin(angle) * radius
+      );
+      tree.rotation.y = Math.random() * Math.PI * 2;
+      this.scene.add(tree);
+    }
+  }
+
+  // -----------------------------------
+  // 10. Crear roca central
+  // -----------------------------------
+  _initRock() {
+    const rockGeo = new THREE.DodecahedronGeometry(0.6, 0);
+    const rockMat = new THREE.MeshStandardMaterial({
+      color: 0x7a7a70,
+      metalness: 0.6,
+      roughness: 1,
+      flatShading: true,
+    });
+    const rock = new THREE.Mesh(rockGeo, rockMat);
+    rock.castShadow = true;
+    rock.receiveShadow = true;
+    rock.position.set(0, 0, 0);
+    rock.scale.set(1.5, 0.8, 1.3);
+    this.scene.add(rock);
+  }
+
+  // -----------------------------------
+  // 11. Vegetación (césped y arbustos)
+  // -----------------------------------
+  _initVegetation() {
+    // Definir forma de hoja
+    const leafShape = new THREE.Shape();
+    leafShape.moveTo(0, 0);
+    leafShape.bezierCurveTo(0.15, 0.1, 0.4, 0.15, 0.5, 0.4);
+    leafShape.bezierCurveTo(0.55, 0.7, 0.3, 1.0, 0, 1.2);
+    leafShape.bezierCurveTo(-0.3, 1.0, -0.55, 0.7, -0.5, 0.4);
+    leafShape.bezierCurveTo(-0.4, 0.15, -0.15, 0.1, 0, 0);
+
+    const extrudeSettings = {
+      depth: 0.02,
+      bevelEnabled: true,
+      bevelThickness: 0.005,
+      bevelSize: 0.005,
+      bevelSegments: 1,
+    };
+    const grassGeo = new THREE.ExtrudeGeometry(leafShape, extrudeSettings);
+    grassGeo.rotateX(-Math.PI / 2);
+
+    const grassMat = new THREE.MeshStandardMaterial({
+      color: 0x4a7247,
+      side: THREE.DoubleSide,
+      flatShading: true,
+    });
+
+    // Césped instanciado
+    const grassCount = 600;
+    const grassInst = new THREE.InstancedMesh(grassGeo, grassMat, grassCount);
+    grassInst.receiveShadow = true;
+
+    const dummy = new THREE.Object3D();
+    const rMin = 4,
+      rMax = 8;
+    for (let i = 0; i < grassCount; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = THREE.MathUtils.lerp(rMin, rMax, Math.random());
+      dummy.position.set(
+        Math.cos(a) * r + (Math.random() - 0.5) * 0.5,
+        0,
+        Math.sin(a) * r + (Math.random() - 0.5) * 0.5
+      );
+      dummy.rotation.y = Math.random() * Math.PI;
+      const s = 0.1 + Math.random() * 0.2;
+      dummy.scale.setScalar(s);
+
+      dummy.updateMatrix();
+      grassInst.setMatrixAt(i, dummy.matrix);
+    }
+    this.scene.add(grassInst);
+
+    // Arbustos sueltos
+    const bushGeo = new THREE.DodecahedronGeometry(0.5, 0);
+    const bushMat = new THREE.MeshStandardMaterial({
+      color: 0x7a7a70,
+      flatShading: true,
+    });
+    const bushCount = 50;
+    for (let i = 0; i < bushCount; i++) {
+      const bush = new THREE.Mesh(bushGeo, bushMat);
+      const a = Math.random() * Math.PI * 2;
+      const r = THREE.MathUtils.lerp(rMax, rMax + 2, Math.random());
+      bush.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
+      const s = 0.2 + Math.random() * 0.6;
+      bush.scale.set(s, s * 0.6, s);
+      bush.castShadow = true;
+      bush.receiveShadow = true;
+      this.scene.add(bush);
+    }
+  }
+
+  // -----------------------------------
+  // 12. Configurar panal (Hive)
+  // -----------------------------------
+  _initHive() {
+    const gltf = this.assets.hiveGLTF;
+    gltf.scene.traverse((node) => {
+      if (!node.isMesh) return;
+      const mat = node.material;
+      mat.color.offsetHSL(0.12, 1.2, 1.0);
+      mat.metalness = 1.0;
+      mat.roughness = 0.4;
+      mat.envMapIntensity = 1;
+      mat.side = THREE.DoubleSide;
+      mat.needsUpdate = true;
+      node.castShadow = true;
+      node.receiveShadow = true;
+    });
+    this.hive = gltf.scene;
+    this.hive.scale.setScalar(1);
+    this.hive.position.y = 0.9;
+    this.hive.rotation.y = -1.6;
+    this.scene.add(this.hive);
+  }
+
+  // -----------------------------------
+  // 13. Configurar AnimationMixer para abejas/avispas
+  // -----------------------------------
+  _initBeesMixer() {
+    const gltf = this.assets.beeGLTF;
+    this.beeMixer = new THREE.AnimationMixer(this.scene);
+    // No estamos reproduciendo ninguna animación hasta que se spawnee una abeja/avispa
+  }
+
+  // -----------------------------------
+  // 14. Setter para hiveSpeedMultiplier (invocado desde GameManager)
+  // -----------------------------------
+  setHiveSpeedMultiplier(fn) {
+    this.hiveSpeedMultiplierFunc = fn;
+  }
+
+  // -----------------------------------
+  // 15. Calcula la velocidad actual de colmena
+  // -----------------------------------
+  _hiveSpeedMultiplier() {
+    return this.hiveSpeedMultiplierFunc();
+  }
+
+  // -----------------------------------
+  // 16. Crear nueva abeja en la escena
+  // -----------------------------------
+  spawnBee() {
+    this.beeSound.stop();
+    this.beeSound.play();
+    const gltf = this.assets.beeGLTF;
+    const bee = gltf.scene.clone();
+    bee.traverse((node) => {
+      if (node.isMesh) node.castShadow = node.receiveShadow = true;
+    });
+    bee.scale.setScalar(0.1);
+
+    // Posición “dentro del panal”
+    const insideOffset = new THREE.Vector3(0, -0.2, 0);
+    const insidePos = insideOffset.clone().applyMatrix4(this.hive.matrixWorld);
+
+    // Punto de salida a radio 1
+    const exitOffset = new THREE.Vector3(1, 0.05, 0);
+    const exitPos = exitOffset.clone().applyMatrix4(this.hive.matrixWorld);
+
+    bee.position.copy(insidePos);
+
+    // Orientar hacia exitPos
+    const toExit = new THREE.Vector3()
+      .subVectors(exitPos, insidePos)
+      .normalize();
+    const yaw = Math.atan2(toExit.x, toExit.z) + Math.PI;
+    bee.rotation.set(0, yaw, 0);
+
+    // Parámetros de órbita
+    const hiveCenter = new THREE.Vector3().setFromMatrixPosition(
+      this.hive.matrixWorld
+    );
+    const dx = exitPos.x - hiveCenter.x;
+    const dz = exitPos.z - hiveCenter.z;
+    const orbitAngle = Math.atan2(dz, dx);
+    const orbitRadius = Math.hypot(dx, dz);
+    const orbitBaseY = exitPos.y;
+    const orbitSpeed =
+      (0.6 + Math.random() * 0.4) * this._hiveSpeedMultiplier();
+
+    bee.userData = {
+      phase: "exiting",
+      exitPos,
+      orbit: {
+        angle: orbitAngle,
+        radius: orbitRadius,
+        baseY: orbitBaseY,
+        speed: orbitSpeed,
+      },
+    };
+
+    this.scene.add(bee);
+    this.beeMixer.clipAction(gltf.animations[0], bee).play();
+    return bee;
+  }
+
+  // -----------------------------------
+  // 17. Crear nueva avispa en la escena
+  // -----------------------------------
+  spawnWasp() {
+    this.waspSound.stop();
+    this.waspSound.play();
+    const gltf = this.assets.waspGLTF;
+    const wasp = gltf.scene.clone();
+    wasp.traverse((node) => {
+      if (node.isMesh) node.castShadow = node.receiveShadow = true;
+    });
+    wasp.scale.setScalar(0.1);
+
+    // Posición “dentro del panal”
+    const insideOffset = new THREE.Vector3(0, -0.2, 0);
+    const insidePos = insideOffset.clone().applyMatrix4(this.hive.matrixWorld);
+
+    // Punto de salida a radio 2.5
+    const exitOffset = new THREE.Vector3(2.5, 0.05, 0);
+    const exitPos = exitOffset.clone().applyMatrix4(this.hive.matrixWorld);
+
+    wasp.position.copy(insidePos);
+
+    // Orientar hacia exitPos
+    const toExit = new THREE.Vector3()
+      .subVectors(exitPos, insidePos)
+      .normalize();
+    const yaw = Math.atan2(toExit.x, toExit.z) + Math.PI;
+    wasp.rotation.set(0, yaw, 0);
+
+    // Parámetros de órbita
+    const hiveCenter = new THREE.Vector3().setFromMatrixPosition(
+      this.hive.matrixWorld
+    );
+    const dx = exitPos.x - hiveCenter.x;
+    const dz = exitPos.z - hiveCenter.z;
+    const orbitAngle = Math.atan2(dz, dx);
+    const orbitRadius = Math.hypot(dx, dz);
+    const orbitBaseY = exitPos.y;
+    const orbitSpeed =
+      (0.4 + Math.random() * 0.4) * this._hiveSpeedMultiplier();
+
+    wasp.userData = {
+      phase: "exiting",
+      exitPos,
+      orbit: {
+        angle: orbitAngle,
+        radius: orbitRadius,
+        baseY: orbitBaseY,
+        speed: orbitSpeed,
+      },
+    };
+
+    this.scene.add(wasp);
+    this.beeMixer.clipAction(gltf.animations[0], wasp).play();
+    return wasp;
+  }
+
+  // -----------------------------------
+  // 18. Lógica de movimiento en órbita
+  // -----------------------------------
+  _moveInOrbit(entity, delta, hiveCenter) {
+    const ud = entity.userData;
+    if (ud.phase === "exiting") {
+      const dir = new THREE.Vector3().subVectors(ud.exitPos, entity.position);
+      const dist = dir.length();
+      if (dist < 0.05) {
+        // Cambiar a fase “orbit”
+        const dx = entity.position.x - hiveCenter.x;
+        const dz = entity.position.z - hiveCenter.z;
+        const currentAngle = Math.atan2(dz, dx);
+        ud.orbit.angle =
+          currentAngle - this.clock.getElapsedTime() * ud.orbit.speed;
+        ud.orbit.radius = Math.hypot(dx, dz);
+        ud.orbit.baseY = entity.position.y;
+        ud.phase = "orbit";
+      } else {
+        dir.normalize();
+        entity.position.addScaledVector(dir, delta * 1.2);
+      }
+    } else {
+      // Fase “orbit”
+      const { angle, radius, baseY, speed } = ud.orbit;
+      const t = this.clock.getElapsedTime();
+      const a = angle + t * speed;
+      entity.position.x = hiveCenter.x + Math.cos(a) * radius;
+      entity.position.z = hiveCenter.z + Math.sin(a) * radius;
+      // Oscilación vertical
+      const verticalOsc = entity.userData === ud.exitPos ? 0.2 : 0.3;
+      entity.position.y = baseY + Math.sin(t * speed * 2 + angle) * verticalOsc;
+      entity.rotation.y = -a + Math.PI;
+    }
+  }
+
+  // -----------------------------------
+  // 19. Iniciar bucle de render
+  // -----------------------------------
+  startRenderLoop() {
+    const renderFrame = () => {
+      requestAnimationFrame(renderFrame);
+      const delta = this.clock.getDelta();
+
+      // Actualizar Mixer
+      if (this.beeMixer) this.beeMixer.update(delta);
+
+      // Producción y movimiento externo desde GameManager
+      if (typeof this.onBeforeRender === "function") {
+        this.onBeforeRender(delta);
+      }
+
+      // Movimiento en órbita para todas las entidades spawnadas
+      const hiveCenter = new THREE.Vector3().setFromMatrixPosition(
+        this.hive.matrixWorld
+      );
+      this.scene.traverse((obj) => {
+        if (obj.userData && obj.userData.orbit) {
+          this._moveInOrbit(obj, delta, hiveCenter);
+        }
+      });
+
+      // Rotación automática de cámara
+      this.controls.autoRotate = true;
+      this.controls.autoRotateSpeed = 0.3;
+      this.controls.target.set(0, 1, 0);
+
+      // Actualizar Stats y controles
+      this.stats.update();
+      this.controls.update();
+
+      // Renderizar escena y post-proceso
+      this.renderer.render(this.scene, this.camera);
+      this.composer.render();
+    };
+
+    renderFrame();
+  }
+
+  // -----------------------------------
+  // 20. Animación de “playGame”: mover cámara al punto inicial
+  // -----------------------------------
+  playGameAnimation() {
+    // Se asume que GSAP está disponible globalmente
+    gsap.to(this.camera.position, {
+      x: -1.12,
+      y: 0.5,
+      z: 3.55,
+      ease: "power2.out",
+      duration: 5,
+    });
+    gsap.to(this.camera.rotation, {
+      x: -0.01,
+      y: -0.23,
+      z: 0,
+      ease: "power2.out",
+      duration: 5,
+    });
+    gsap.to(this.camera, {
+      zoom: 1.19,
+      ease: "power2.out",
+      duration: 5,
+      onUpdate: () => this.camera.updateProjectionMatrix(),
+      onComplete: () => {
+        this.controls.maxDistance = 7;
+      },
+    });
+  }
+
+  // -----------------------------------
+  // 21. Ajustar tamaño al cambiar ventana
+  // -----------------------------------
+  _onResize() {
+    const w = this.containerEl.clientWidth;
+    const h = this.containerEl.clientHeight;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h, false);
+    this.composer.setSize(w, h);
+  }
+}

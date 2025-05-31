@@ -1,4 +1,4 @@
-"// js/components/SoundToggle.js
+// js/components/SoundToggle.js
 
 import { createElement } from "../utils/domHelper.js";
 

@@ -4,10 +4,13 @@
   "description": "Idle game Honey Hive Idle - Three.js + GSAP + SCSS modular",
   "main": "index.html",
   "scripts": {
-    "start": "live-server --port=8080",
+    "start": "concurrently \"npm run watch-css\" \"npm run serve\"",
+    "serve": "live-server --port=8080",
+    "watch-css": "sass --watch scss/main.scss:css/main.css --no-source-map",
     "build-css": "sass scss/main.scss css/main.css --no-source-map"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "live-server": "^1.2.1",
     "sass": "^1.64.0"
   },

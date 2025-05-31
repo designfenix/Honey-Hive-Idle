@@ -1,5 +1,5 @@
-"// js/components/LoadingScreen.js
-
+// js/components/LoadingScreen.js
+import gsap from "https://esm.sh/gsap";
 import { getElement } from "../utils/domHelper.js";
 
 /**

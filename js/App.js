@@ -1,4 +1,4 @@
-"// js/App.js
+// js/App.js
 
 import { AssetService } from "./services/AssetService.js";
 import { LoadingScreen } from "./components/LoadingScreen.js";
@@ -9,7 +9,7 @@ import { UpgradeCard } from "./components/UpgradeCard.js";
 import { ThreeScene } from "./three/ThreeScene.js";
 import { GameManager } from "./GameManager.js";
 import { getElement } from "./utils/domHelper.js";
-
+import gsap from "https://esm.sh/gsap";
 /**
  * Clase principal que orquesta el flujo completo:
  *  1. Pantalla de carga → AssetService.loadAll()
@@ -33,17 +33,45 @@ class App {
     this.assetService
       .loadAll()
       .then((assets) => {
-        // Todos los assets ya en this.assetService.assets
-        // 3a) Ocultamos LoadingScreen
+        // 1) Todos los assets cargaron, ahora ocultamos la pantalla de carga
         return this.loadingScreen.hide().then(() => assets);
       })
       .then((assets) => {
-        // 3b) Mostramos IntroScreen (animaciones de logo + botón)
+        // 2) mostramos el IntroScreen
         this.introScreen = new IntroScreen(() => this._onPlay());
         this.introScreen.show();
 
-        // Guardamos assets para usar en el juego
+        // 3) Guardamos los assets
         this.assets = assets;
+
+        // 4) Inicializamos ThreeScene
+        const sceneContainer = getElement(".scene-container");
+        this.threeScene = new ThreeScene(sceneContainer, this.assets, (delta) =>
+          this.gameManager.productionLoop(delta)
+        );
+
+        // 5) Creamos ResourceBar (actualiza valores superiores)
+        this.resourceBar = new ResourceBar();
+
+        // 6) Creamos SoundToggle (música)
+        this.soundToggle = new SoundToggle(this.threeScene.music);
+
+        // 7) Creamos todas las UpgradeCards a partir del DOM presente
+        const upgradeEls = document.querySelectorAll(".upgrade-card");
+        this.upgradeCards = Array.from(upgradeEls).map(
+          (el) => new UpgradeCard(el, null /* se asigna luego en GameManager */)
+        );
+
+        // 8) Instanciamos GameManager inyectando dependencies
+        this.gameManager = new GameManager(
+          this.threeScene,
+          this.resourceBar,
+          this.upgradeCards,
+          this.soundToggle
+        );
+
+        // 9) Ahora que GameManager está listo, iniciamos el bucle de render
+        this.threeScene.startRenderLoop();
       })
       .catch((err) => {
         console.error("Error cargando assets:", err);
@@ -71,36 +99,9 @@ class App {
     const headerEl = getElement(".app-header");
     gsap.to(headerEl, { opacity: 1, duration: 2 });
 
-    // 5) Inicializamos ThreeScene
-    const sceneContainer = getElement(".scene-container");
-    this.threeScene = new ThreeScene(sceneContainer, this.assets, (delta) =>
-      this.gameManager.productionLoop(delta)
-    );
+    this.threeScene.startMusic();
 
-    // 6) Creamos ResourceBar (actualiza valores superiores)
-    this.resourceBar = new ResourceBar();
-
-    // 7) Creamos SoundToggle (música)
-    this.soundToggle = new SoundToggle(this.threeScene.music);
-
-    // 8) Creamos todas las UpgradeCards a partir del DOM presente
-    const upgradeEls = document.querySelectorAll(".upgrade-card");
-    this.upgradeCards = Array.from(upgradeEls).map(
-      (el) => new UpgradeCard(el, null /* se asigna luego en GameManager */)
-    );
-
-    // 9) Instanciamos GameManager inyectando dependencies
-    this.gameManager = new GameManager(
-      this.threeScene,
-      this.resourceBar,
-      this.upgradeCards,
-      this.soundToggle
-    );
-
-    // 10) Ahora que GameManager está listo, iniciamos el bucle de render
-    this.threeScene.startRenderLoop();
-
-    // 11) Ejecutamos animación de “playGame” (mover cámara)
+    // Ejecutamos animación de “playGame” (mover cámara)
     this.threeScene.playGameAnimation();
   }
 }

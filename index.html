@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Honey Hive Idle</title>
+  <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Juego de gestión de recursos con abejas y colmenas" />
+  <meta name="keywords" content="juego, abejas, colmenas, gestión de recursos, idle game" />
+  <meta name="author" content="Design Fenix" />
+  <meta name="theme-color" content="#f0e68c" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
@@ -21,7 +29,7 @@
     <!-- Intro Screen -->
     <div class="intro-screen">
       <img
-        src="https://design-fenix.com.ar/codepen/bee/logo.png"
+        src="assets/images/logo.png"
         alt="Logo Honey Hive Idle"
         class="intro-logo"
       />
@@ -104,9 +112,9 @@
   </div>
 
   <!-- Incluir SCRIPTS como ES6 modules -->
+  <script type="module" src="js/services/AssetService.js"></script>
   <script type="module" src="js/utils/domHelper.js"></script>
   <script type="module" src="js/utils/formatNumber.js"></script>
-  <script type="module" src="js/services/AssetService.js"></script>
   <script type="module" src="js/components/LoadingScreen.js"></script>
   <script type="module" src="js/components/IntroScreen.js"></script>
   <script type="module" src="js/components/ResourceBar.js"></script>

@@ -1,4 +1,4 @@
-"// js/services/AssetService.js
+// js/services/AssetService.js
 
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { GLTFLoader } from "https://esm.sh/three@0.174.0/examples/jsm/loaders/GLTFLoader.js";
@@ -18,23 +18,23 @@ import { AudioLoader } from "https://esm.sh/three@0.174.0";
 export class AssetService {
   static ASSETS_URLS = {
     HIVE_GLTF:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/panal.glb",
+      "assets/model/panal.glb",
     BEE_GLTF:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/minecraft_bee.glb",
+      "assets/model/minecraft_bee.glb",
     WASP_GLTF:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/wasp.glb",
+      "assets/model/wasp.glb",
     HDR_URL:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/minedump_flats_1k.hdr",
+      "assets/hdr/minedump_flats_1k.hdr",
     MUSIC_URL:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/music2.mp3",
+      "assets/sound/music2.mp3",
     GRASS_TEXTURE:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/grass2.png",
+      "assets/texture/grass2.png",
     POP_SFX:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/pop-2.mp3",
+      "assets/sound/pop-2.mp3",
     BEE_SFX:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/bee-sound.mp3",
+      "assets/sound/bee-sound.mp3",
     WASP_SFX:
-      "https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/wasp-sound.mp3",
+      "assets/sound/wasp-sound.mp3",
   };
 
   constructor(onProgressCallback) {

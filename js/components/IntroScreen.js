@@ -1,5 +1,5 @@
-"// js/components/IntroScreen.js
-
+// js/components/IntroScreen.js
+import gsap from "https://esm.sh/gsap";
 import { getElement } from "../utils/domHelper.js";
 
 /**
@@ -46,6 +46,10 @@ export class IntroScreen {
    */
   show() {
     this.container.style.display = "flex";
+    gsap.to(this.container, {
+        opacity: 1,
+        duration: 1
+      });
     // Primero hacemos que el logo aparezca
     gsap.fromTo(
       this.container.querySelector("img"),

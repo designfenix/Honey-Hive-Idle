@@ -1,4 +1,4 @@
-"// js/components/UpgradeCard.js
+// js/components/UpgradeCard.js
 
 import { getElement, createElement } from "../utils/domHelper.js";
 import { formatNumber } from "../utils/formatNumber.js";

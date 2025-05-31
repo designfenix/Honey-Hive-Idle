@@ -1,4 +1,4 @@
-"/* ----------------- SCSS PRINCIPAL ----------------- */
+/* ----------------- SCSS PRINCIPAL ----------------- */
 
 /* 1. Variables globales */
 @import "variables";
@@ -19,8 +19,3 @@
 @import "components/scene-container";
 @import "components/upgrade-bar";
 @import "components/upgrade-card";
-/* (Opcional) Si separaste sound-toggle: */
-// @import "components/sound-toggle";
-
-/* 6. Aquí podrías añadir utilidades adicionales, si las hubieras creado */
-// @import "utilities";

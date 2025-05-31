@@ -1,4 +1,4 @@
-"/* ----------------- COMPONENTE: IntroScreen ----------------- */
+/* ----------------- COMPONENTE: IntroScreen ----------------- */
 
 .intro-screen {
   position: fixed;
@@ -8,6 +8,7 @@
   align-items: center;
   justify-content: center;
   z-index: 100;
+  opacity: 0;
 }
 
 .intro-logo {
@@ -37,3 +38,4 @@
     transform: translateY(1px);
   }
 }
+ 

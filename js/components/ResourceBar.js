@@ -1,4 +1,4 @@
-"// js/components/ResourceBar.js
+// js/components/ResourceBar.js
 
 import { getElement } from "../utils/domHelper.js";
 import { formatNumber } from "../utils/formatNumber.js";

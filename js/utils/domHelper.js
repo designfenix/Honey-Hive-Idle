@@ -1,4 +1,4 @@
-"// js/utils/domHelper.js
+// js/utils/domHelper.js
 
 /**
  * Selecciona un elemento del DOM y arroja error si no lo encuentra.
@@ -28,3 +28,4 @@ export function createElement(tag, options = {}, parent) {
   if (parent) parent.appendChild(el);
   return el;
 }
+import gsap from "https://esm.sh/gsap@3.13.0";

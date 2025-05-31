@@ -1,4 +1,4 @@
-"// js/GameManager.js
+// js/GameManager.js
 
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { ResourceBar } from "./components/ResourceBar.js";

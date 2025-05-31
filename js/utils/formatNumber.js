@@ -1,4 +1,4 @@
-"// js/utils/formatNumber.js
+// js/utils/formatNumber.js
 
 /**
  * Formatea un número en K/M si supera cierto umbral.

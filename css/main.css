@@ -1,1 +1,363 @@
-/* Este archivo será generado por SASS */
+@charset "UTF-8";
+/* ----------------- SCSS PRINCIPAL ----------------- */
+/* 1. Variables globales */
+/* ----------------- VARIABLES GLOBALES ----------------- */
+:root {
+  /* Colores principales */
+  --dark-panel: #2d1d2c;
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --accent: #f1c40f;
+  --accent-hover: #e67e22;
+  --text-light: #ffffff;
+  /* Tipografía */
+  --font-family: "Segoe UI", sans-serif;
+  /* Ruta sprite sonido (sound-toggle) */
+  --sound-control-sprite: url("https://corsproxy.io/?url=https://design-fenix.com.ar/codepen/bee/sound-control.png");
+  --sound-control-sprite-size: 64px;
+}
+
+/* 2. Mixins y funciones */
+/* ----------------- MIXINS Y FUNCIONES ----------------- */
+/* Ejemplo de mixin para media query (preparado para usarse) */
+/* Mixin para centrar elementos absoluta/relativamente */
+/* 3. Reset y estilos base */
+/* ----------------- RESET Y ESTILOS BASE ----------------- */
+/* Reset global */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Body y fuente */
+body {
+  font-family: var(--font-family);
+  overflow: hidden;
+  background: #355e54;
+  /* Cursor global: si no carga la imagen, usa cursor por defecto */
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAYCAMAAADEfo0+AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAJYUExURV8oEEkeDVAgDgAAAP//REcVCk4dDUsbDF8sEQsAAEsaDWUvEmw1E1EeDmMtEWkxEmUuEmMsEWYvEVQmFGErEHY6FUMXC2syE0AVDFQjD2k1DlgmEFwqEk0eDTQHAF4pEJlVF2gxEmkyEmcwElQiDmwzE39BFwYAAD4PCVMiDVMiDlYiDlciDlMfDVYhDl4rEo9LClEhDl8sEmArETMPB00fDG01E3Q8FG83E0wZDL+CIY9WGWUuEZleGmMsEZ1jG2QtETYICpxiG2cwElEdDpddGm02E1kiEJNZGXE5FFkjEOelJ5FYGXA5FFEcDualJ5RaGW43E0wZDZpfGmYwEkkZD59kG2UuEgAAA51jG2UuEpRaGmYuEkoXDZJYGW83E3M6FHpBFXtCFXg/FWw0E2UuEWAqEGIrEWMtEWQuEb6AIX9FFnY+FWYvEoNKF2YuEmYuEYdNF5thG2cvEj0RCZ5jG4NLF1wlEFsmD39GFrZ5H2gxEjsOCWoyEmkwEmEqEGMsEXtCFWgwEhYAAhMAAGMsEnlBFcWGIjkOCWItEXQ8FKNoHGYvETcPCWArEWszEnE5E1UiDnY9FHg+FdybJdiYJXg+FN6cJv+7LN2cJv+6K9mYJf+4K3c+FOSiJ/+5K/64K/23K+SjJ9iXJf+7K+ilJ+KgJuOhJuOgJsGDIfizKvSwKfeyKqBmHH1EFvy2K8GCIaZrHfSxKeelJ5RZGd2bJqRoHPWwKZ5jG7J2H/KuKf63K9qaJXI5FPOuKa1wHaxwHvSvKa1wHr+BId6dJnQ8FHY+FP///8QmcJMAAACSdFJOUwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP3xTgX81VjQX9RiAtZeBt5ZC+ZXC/7nVgj+41kF3WMC2GkB1lvPTwPSVPPy5ufjkSosLCz7+Pt7n06J+9NmAfybMSGU96ACl5AkO/OeAQEpsPQCJdzkegIg24QKG5YmRQAAAAFiS0dEx40FSlsAAAAHdElNRQfpBRwMJBIk++43AAABQ0lEQVQY02MwM7ewZGBkYoYBhklW1jYsrGzscIHJU6ba2jFzcHLBBKZNnzHV3sGRm4cXJjBz1qzZTs4ufPwIgTmzpru6uQtARBjmAgXmzJnn4eklKCQMUzF/zgJvH18/EVExiIr58+fMWegfEBgkLiEJ0QISWbAoOCRUSloGagYQzJ8ZFh4hK4cQmDNrdmQUszySwJxZi6NjYpG0zJ+/ZHZcPEQAZM3SZctXLFuZABZYtXrOnDVr1yUmJSWngATWb9i4ac7CzVtS09IzMhmmbV2YlZ2zbfv8hTtyFRSVlBkmT92Zl19QuGv+7j1FxSUqzAx7S8vKVSsqq/bNn7W/ugYoUFtXr6om3tC4dNb8A00ggeYWdQ1Nxda29oNLDlV3aDEzaOvo6jHrG3R2HT7S3dNryMwADiYj477+o8cmTDQxZQYANLCWSc8ipgUAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjUtMDUtMjhUMTI6MzY6MDMrMDA6MDCG90vmAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI1LTA1LTI4VDEyOjM2OjAzKzAwOjAw96rzWgAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNS0wNS0yOFQxMjozNjoxOCswMDowMG4ShuEAAAAASUVORK5CYII=) 0 0, auto !important;
+}
+
+/* Enlaces y botones “hover” global */
+a:hover,
+button:hover {
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAYCAMAAADEfo0+AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAJYUExURV8oEEkeDVAgDgAAAP//REcVCk4dDUsbDF8sEQsAAEsaDWUvEmw1E1EeDmMtEWkxEmUuEmMsEWYvEVQmFGErEHY6FUMXC2syE0AVDFQjD2k1DlgmEFwqEk0eDTQHAF4pEJlVF2gxEmkyEmcwElQiDmwzE39BFwYAAD4PCVMiDVMiDlYiDlciDlMfDVYhDl4rEo9LClEhDl8sEmArETMPB00fDG01E3Q8FG83E0wZDL+CIY9WGWUuEZleGmMsEZ1jG2QtETYICpxiG2cwElEdDpddGm02E1kiEJNZGXE5FFkjEOelJ5FYGXA5FFEcDualJ5RaGW43E0wZDZpfGmYwEkkZD59kG2UuEgAAA51jG2UuEpRaGmYuEkoXDZJYGW83E3M6FHpBFXtCFXg/FWw0E2UuEWAqEGIrEWMtEWQuEb6AIX9FFnY+FWYvEoNKF2YuEmYuEYdNF5thG2cvEj0RCZ5jG4NLF1wlEFsmD39GFrZ5H2gxEjsOCWoyEmkwEmEqEGMsEXtCFWgwEhYAAhMAAGMsEnlBFcWGIjkOCWItEXQ8FKNoHGYvETcPCWArEWszEnE5E1UiDnY9FHg+FdybJdiYJXg+FN6cJv+7LN2cJv+6K9mYJf+4K3c+FOSiJ/+5K/64K/23K+SjJ9iXJf+7K+ilJ+KgJuOhJuOgJsGDIfizKvSwKfeyKqBmHH1EFvy2K8GCIaZrHfSxKeelJ5RZGd2bJqRoHPWwKZ5jG7J2H/KuKf63K9qaJXI5FPOuKa1wHaxwHvSvKa1wHr+BId6dJnQ8FHY+FP///8QmcJMAAACSdFJOUwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP3xTgX81VjQX9RiAtZeBt5ZC+ZXC/7nVgj+41kF3WMC2GkB1lvPTwPSVPPy5ufjkSosLCz7+Pt7n06J+9NmAfybMSGU96ACl5AkO/OeAQEpsPQCJdzkegIg24QKG5YmRQAAAAFiS0dEx40FSlsAAAAHdElNRQfpBRwMJBIk++43AAABQ0lEQVQY02MwM7ewZGBkYoYBhklW1jYsrGzscIHJU6ba2jFzcHLBBKZNnzHV3sGRm4cXJjBz1qzZTs4ufPwIgTmzpru6uQtARBjmAgXmzJnn4eklKCQMUzF/zgJvH18/EVExiIr58+fMWegfEBgkLiEJ0QISWbAoOCRUSloGagYQzJ8ZFh4hK4cQmDNrdmQUszySwJxZi6NjYpG0zJ+/ZHZcPEQAZM3SZctXLFuZABZYtXrOnDVr1yUmJSWngATWb9i4ac7CzVtS09IzMhmmbV2YlZ2zbfv8hTtyFRSVlBkmT92Zl19QuGv+7j1FxSUqzAx7S8vKVSsqq/bNn7W/ugYoUFtXr6om3tC4dNb8A00ggeYWdQ1Nxda29oNLDlV3aDEzaOvo6jHrG3R2HT7S3dNryMwADiYj477+o8cmTDQxZQYANLCWSc8ipgUAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjUtMDUtMjhUMTI6MzY6MDMrMDA6MDCG90vmAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI1LTA1LTI4VDEyOjM2OjAzKzAwOjAw96rzWgAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNS0wNS0yOFQxMjozNjoxOCswMDowMG4ShuEAAAAASUVORK5CYII=) 0 0, auto !important;
+}
+
+/* 4. Layout general (contenedor, main, scrollbar global) */
+/* ----------------- ESTILOS DE LAYOUT GENERAL ----------------- */
+/* Contenedor principal de la aplicación */
+.colmena-app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Contenido principal: Header + Main */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Para custom scrollbars en el upgrade-bar (global) */
+::-webkit-scrollbar {
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 196, 0, 0.7);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 5. Componentes individuales */
+/* ----------------- COMPONENTE: Header (ResourceBar) ----------------- */
+/* Barra de recursos fija en la parte superior */
+.app-header {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark-panel);
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  gap: 2rem;
+  color: var(--text-light);
+  z-index: 10;
+  box-shadow: none;
+  opacity: 0; /* Se animará desde JS una vez cargue todo */
+}
+
+/* Contenedor de recursos (pollen, nectar, speed) */
+.resources {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Cada recurso individual */
+.resource {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  /* Ícono dentro de cada recurso */
+  /* Valor numérico del recurso */
+  /* El recurso “speed” muestra % al lado */
+}
+.resource .icon {
+  font-size: 1.2rem;
+  margin-right: 0.25rem;
+}
+.resource .value {
+  font-weight: bold;
+  color: var(--text-light);
+}
+.resource.speed .value::after {
+  content: "%";
+  margin-left: 0.1rem;
+  font-size: 0.8rem;
+}
+
+/* Botón para controlar música en header (sprite) */
+#music-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: block;
+  width: var(--sound-control-sprite-size);
+  height: var(--sound-control-sprite-size);
+  outline: none;
+  border: 0;
+  background: var(--sound-control-sprite) 0 0 no-repeat;
+  background-size: var(--sound-control-sprite-size);
+  transition: ease transform 0.3s;
+  z-index: 101;
+  /* Al hacer hover, escalamos un poco */
+  /* Cuando está en estado “silence”, cambiamos la posición del sprite */
+}
+#music-toggle:hover {
+  transform: scale(1.1);
+}
+#music-toggle.silence {
+  background-position: 0 calc(var(--sound-control-sprite-size) * -1);
+}
+
+/* ----------------- COMPONENTE: IntroScreen ----------------- */
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+}
+
+.intro-logo {
+  max-width: 80%;
+  width: 320px;
+  margin-bottom: 2rem;
+}
+
+.intro-button {
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  font-family: var(--font-family);
+  font-weight: bold;
+  color: #222;
+  background: var(--accent);
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+.intro-button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+.intro-button:active {
+  transform: translateY(1px);
+}
+
+/* ----------------- COMPONENTE: LoadingScreen ----------------- */
+/* Contenedor de la pantalla de carga */
+.loading-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Centrado absoluto con mixin */
+  width: 60%;
+  max-width: 400px;
+  text-align: center;
+  z-index: 1000;
+}
+
+/* Fondo de la barra de carga */
+.loading-bar-bg {
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Relleno que se expande en base al % cargado */
+.loading-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.1s ease;
+}
+
+/* Texto que muestra “Cargando: XX%” */
+.loading-text {
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* ----------------- COMPONENTE: SceneContainer (Three.js) ----------------- */
+.scene-container {
+  flex: 1;
+  position: relative;
+  padding-bottom: 120px; /* Dejamos espacio para la upgrade-bar fija abajo */
+}
+
+/* El canvas de Three.js debe ocupar todo su contenedor */
+#three-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* ----------------- COMPONENTE: UpgradeBar ----------------- */
+.upgrade-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--dark-panel);
+  border-top: 4px solid #ffd64a;
+  padding: 0.5rem 0;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 20;
+  opacity: 0; /* Aparece con JS cuando carga todo */
+  /* Scrollbar personalizado */
+}
+.upgrade-bar::-webkit-scrollbar {
+  height: 8px;
+}
+.upgrade-bar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 196, 0, 0.7);
+  border-radius: 4px;
+}
+.upgrade-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ----------------- COMPONENTE: UpgradeCard ----------------- */
+/*
+  Cada .upgrade-card abarca:
+  - icon: el emoji o ícono grande
+  - info: texto, título, descripción, costo, botón y contador
+*/
+.upgrade-card {
+  background: var(--card-bg);
+  border-radius: 0.75rem;
+  flex: 0 0 auto;
+  width: 200px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-light);
+  position: relative;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  /* Ícono grande de la tarjeta de upgrade */
+}
+.upgrade-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.upgrade-card .icon {
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+.upgrade-card .info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.upgrade-card .info h2 {
+  font-size: 1rem;
+  margin-bottom: 0;
+  color: var(--text-light);
+  text-align: center;
+}
+.upgrade-card .info .description {
+  font-size: 0.85rem;
+  color: #ddd;
+  text-align: center;
+}
+.upgrade-card .info .effect {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-align: center;
+}
+.upgrade-card .info .cost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  gap: 0.25rem;
+  color: var(--accent);
+  margin-top: 0.25rem;
+}
+.upgrade-card .info .cost .icon {
+  font-size: 1.1rem;
+  margin-right: 0.25rem;
+}
+.upgrade-card .info .btn-purchase {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 0.5rem;
+  color: #222;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+.upgrade-card .info .btn-purchase:hover {
+  background: var(--accent-hover);
+}
+.upgrade-card .info .btn-purchase:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
+.upgrade-card .info .count {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #f1c40f;
+  text-align: center;
+}
+.upgrade-card .info .count span {
+  font-weight: bold;
+}
