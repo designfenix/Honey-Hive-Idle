@@ -64,8 +64,8 @@ export class ThreeScene {
     this._initBeesMixer();
 
     // 9. Stats (FPS)
-    this.stats = new Stats();
-    document.body.appendChild(this.stats.dom);
+    //this.stats = new Stats();
+    //document.body.appendChild(this.stats.dom);
 
     // 10. Resize handling
     window.addEventListener("resize", () => this._onResize());
@@ -631,7 +631,7 @@ export class ThreeScene {
       this.controls.target.set(0, 1, 0);
 
       // Actualizar Stats y controles
-      this.stats.update();
+      //this.stats.update();
       this.controls.update();
 
       // Renderizar escena y post-proceso

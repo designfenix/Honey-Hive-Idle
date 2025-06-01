@@ -54,8 +54,8 @@
 /* Botón para controlar música en header (sprite) */
 #music-toggle {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 8px;
+  right: 8px;
   display: block;
   width: var(--sound-control-sprite-size);
   height: var(--sound-control-sprite-size);

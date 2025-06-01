@@ -5,10 +5,25 @@
   <title>Honey Hive Idle</title>
   <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Juego de gestión de recursos con abejas y colmenas" />
+  <meta name="description" content="Join the buzz! Hire bees, upgrade your hive, and build your pollen empire in this low-poly idle game." />
   <meta name="keywords" content="juego, abejas, colmenas, gestión de recursos, idle game" />
   <meta name="author" content="Design Fenix" />
   <meta name="theme-color" content="#f0e68c" />
+    <!-- Open Graph principales -->
+  <meta property="og:title" content="Honey Hive Idle" />
+  <meta property="og:description" content="Join the buzz! Hire bees, upgrade your hive, and build your pollen empire in this low-poly idle game." />
+  <meta property="og:image" content="/Honey-Hive-Idle/assets/images/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Honey Hive Idle" />
+
+  <!-- Twitter Card (si quieres compatibilidad con Twitter) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Honey Hive Idle" />
+  <meta name="twitter:description" content="Join the buzz! Hire bees, upgrade your hive, and build your pollen empire in this low-poly idle game." />
+  <meta name="twitter:image" content="/Honey-Hive-Idle/assets/images/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -23,7 +38,7 @@
         <div class="loading-bar-fill"></div>
       </div>
       <div class="loading-text">
-        Cargando: <span id="loading-percent">0%</span>
+        Loading: <span id="loading-percent">0%</span>
       </div>
     </div>
 
@@ -34,7 +49,7 @@
         alt="Logo Honey Hive Idle"
         class="intro-logo"
       />
-      <button id="btn-play" class="intro-button">JUGAR</button>
+      <button id="btn-play" class="intro-button">PLAY</button>
     </div>
 
     <!-- Header (ResourceBar) -->
@@ -60,50 +75,116 @@
       <div class="scene-container">
         <canvas id="three-canvas"></canvas>
       </div>
-      <div class="upgrade-bar open">
-        <button class="upgrade-toggle" aria-expanded="false" aria-label="Mostrar mejoras">
+      <div class="upgrade-bar">
+        <button class="upgrade-toggle" aria-expanded="false" aria-label="Show upgrades">
         </button>
         <div class="content-scroll">
           <div class="upgrade-card" data-upgrade="contratar">
-            <div class="icon"><img src="assets/images/icon-bee.png" alt="Abeja"></div>
+            <div class="icon"><img src="assets/images/icon-bee.png" alt="Bee"></div>
             <div class="info">
-              <h2>Contratar Abeja</h2>
-              <p class="description">Genera 1 pólen/s</p>
+              <h2>Hire Bee</h2>
+              <p class="description">Generates 1 pollen/s</p>
               <div class="cost">
-                <span class="icon"><img src="assets/images/icon-polen.png" alt="Polen"></span>
+                <span class="icon"><img src="assets/images/icon-polen.png" alt="Pollen"></span>
                 <span id="bee-cost">0</span>
               </div>
-              <div class="count">Cantidad: <span id="bee-value">0</span></div>
+              <div class="count">Amount: <span id="bee-value">0</span></div>
             </div>
           </div>
           <div class="upgrade-card" data-upgrade="avispa">
-            <div class="icon"><img src="assets/images/icon-wasp.png" alt="Avispa"></div>
+            <div class="icon"><img src="assets/images/icon-wasp.png" alt="Wasp"></div>
             <div class="info">
-              <h2>Contratar Avispa</h2>
-              <p class="description">Genera 1.5 pólen/s</p>
+              <h2>Hire Wasp</h2>
+              <p class="description">Generates 1.5 pollen/s</p>
               <div class="cost">
                 <span class="icon"><img src="assets/images/icon-polen.png" alt="Polen"></span>
                 <span id="wasp-cost">0</span>
               </div>
-              <div class="count">Cantidad: <span id="wasp-value">0</span></div>
+              <div class="count">Amount: <span id="wasp-value">0</span></div>
             </div>
           </div>
           <div class="upgrade-card" data-upgrade="produccion">
-            <div class="icon"><img src="assets/images/icon-energy.png" alt="Energy"></div>
+            <div class="icon"><img src="assets/images/icon-production.png" alt="Energy"></div>
             <div class="info">
-              <h2>Mejorar Producción</h2>
-              <div class="effect">+<span id="prod-value">0</span>% / abeja</div>
+              <h2>Improve Production</h2>
+              <div class="effect">+<span id="prod-value">0</span>% / bee</div>
               <p class="cost"><span class="icon"><img src="assets/images/icon-nectar.png" alt="Nectar"></span> <span id="prod-cost">0</span></p>
             </div>
           </div>
           <div class="upgrade-card" data-upgrade="mejorar-colmena">
             <div class="icon"><img src="assets/images/icon-energy.png" alt="Energy"></div>
             <div class="info">
-              <h2>Mejorar Colmena</h2>
-              <p class="description">+<span id="hive-speed">0</span>% velocidad</p>
+              <h2>Improve Hive</h2>
+              <p class="description">+<span id="hive-speed">0</span>% speed</p>
               <div class="cost">
-                <span class="icon"><img src="assets/images/icon-nectar.png" alt="Nectar"></span>
+                <span class="icon"><img src="assets/images/icon-nectar.png" alt="Hive"></span>
                 <span id="hive-cost">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-card locked" data-upgrade="X">
+            <div class="icon"></div>
+            <div class="info">
+              <h2></h2>
+              <p class="description"></p>
+              <div class="cost">
+                <span class="icon"></span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-card locked" data-upgrade="X">
+            <div class="icon"></div>
+            <div class="info">
+              <h2></h2>
+              <p class="description"></p>
+              <div class="cost">
+                <span class="icon"></span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-card locked" data-upgrade="X">
+            <div class="icon"></div>
+            <div class="info">
+              <h2></h2>
+              <p class="description"></p>
+              <div class="cost">
+                <span class="icon"></span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-card locked" data-upgrade="X">
+            <div class="icon"></div>
+            <div class="info">
+              <h2></h2>
+              <p class="description"></p>
+              <div class="cost">
+                <span class="icon"></span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-card locked" data-upgrade="X">
+            <div class="icon"></div>
+            <div class="info">
+              <h2></h2>
+              <p class="description"></p>
+              <div class="cost">
+                <span class="icon"></span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-card locked" data-upgrade="X">
+            <div class="icon"></div>
+            <div class="info">
+              <h2></h2>
+              <p class="description"></p>
+              <div class="cost">
+                <span class="icon"></span>
+                <span>0</span>
               </div>
             </div>
           </div>

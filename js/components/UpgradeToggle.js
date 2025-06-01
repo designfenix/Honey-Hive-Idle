@@ -6,7 +6,7 @@ export class UpgradeToggle {
     this.upgradeBar = document.querySelector(".upgrade-bar");
 
     // Estado inicial: upgrade-bar está cerrada
-    this._isOpen = true;
+    this._isOpen = false;
 
     // Listener del clic
     this.toggleBtn.addEventListener("click", () => this._toggle());
