@@ -22,7 +22,15 @@ export class UpgradeCard {
     this.onClickCallback = onClickCallback;
 
     this.costEl = element.querySelector(".cost span:not(.icon)"); // el <span> que contiene el número
-    this.valueEl = element.querySelector(".count span"); // solo existe en abeja/avispa
+    // Dependiendo del tipo de tarjeta, el valor puede estar en lugares distintos
+    if (this.upgradeType === "produccion") {
+      this.valueEl = element.querySelector("#prod-value");
+    } else if (this.upgradeType === "mejorar-colmena") {
+      this.valueEl = element.querySelector("#hive-speed");
+    } else {
+      // Abejas y avispas muestran la cantidad dentro de .count
+      this.valueEl = element.querySelector(".count span");
+    }
 
     // Listener al botón de compra
     this.element.addEventListener("click", () => {
