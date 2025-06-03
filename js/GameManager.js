@@ -50,6 +50,14 @@ export class GameManager {
       pollenRatio: 0.2,
     };
 
+    this.cardLevelReq = {
+      contratar: 1,
+      avispa: 2,
+      produccion: 5,
+      'mejorar-colmena': 7,
+      pato: 10
+    };
+
     // Configuramos el hiveSpeedMultiplier en ThreeScene
     // Equivalente a: 1 + this.hiveLevel * 0.05
     this.threeScene.setHiveSpeedMultiplier(() => 1 + this.hiveLevel * 0.05);
@@ -78,6 +86,8 @@ export class GameManager {
         }
       };
     });
+
+    this._updateCardLocks();
 
   }
 
@@ -122,7 +132,18 @@ export class GameManager {
   _checkLevelUp() {
     while (this.pollenLifetime >= this._levelRequirement(this.userLevel)) {
       this.userLevel++;
+      if (this.threeScene.lightCone && typeof this.threeScene.lightCone.triggerAnimation === 'function') {
+        this.threeScene.lightCone.triggerAnimation();
+      }
+      this._updateCardLocks();
     }
+  }
+
+  _updateCardLocks() {
+    this.upgradeCards.forEach(card => {
+      const req = this.cardLevelReq[card.upgradeType] ?? 1;
+      card.setLocked(this.userLevel < req);
+    });
   }
 
   // -------------------------------------------------
