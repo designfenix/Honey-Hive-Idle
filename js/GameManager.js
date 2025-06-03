@@ -33,6 +33,8 @@ export class GameManager {
     this.pollen = 0;
     // Polén acumulado durante toda la partida (no se reduce al gastar)
     this.pollenLifetime = 0;
+    // Cantidad de polen acumulado desde que se alcanzó el nivel actual
+    this.levelStartPollen = 0;
     this.prodLevel = 0;
     this.hiveLevel = 0;
     this.userLevel = 1;
@@ -130,8 +132,9 @@ export class GameManager {
   }
 
   _checkLevelUp() {
-    while (this.pollenLifetime >= this._levelRequirement(this.userLevel)) {
+    while (this.pollenLifetime - this.levelStartPollen >= this._levelRequirement(this.userLevel)) {
       this.userLevel++;
+      this.levelStartPollen = this.pollenLifetime;
       if (this.threeScene.lightCone && typeof this.threeScene.lightCone.triggerAnimation === 'function') {
         this.threeScene.lightCone.triggerAnimation();
       }
@@ -227,6 +230,7 @@ export class GameManager {
     // 1. Refrescar ResourceBar:
     const speedPercent = (1 + this.hiveLevel * 0.05) * 100;
     const levelReq = this._levelRequirement(this.userLevel);
+    const levelProgress = this.pollenLifetime - this.levelStartPollen;
     this.resourceBar.refresh(
       this.bees.length,
       this.wasps.length,
@@ -236,7 +240,7 @@ export class GameManager {
       speedPercent,
       this.userLevel,
       levelReq,
-      this.pollenLifetime
+      levelProgress
     );
 
     // 2. Refrescar cada UpgradeCard con su coste, valor y si se puede pagar:
