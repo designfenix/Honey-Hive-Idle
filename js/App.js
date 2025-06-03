@@ -5,11 +5,11 @@ import { LoadingScreen } from "./components/LoadingScreen.js";
 import { IntroScreen } from "./components/IntroScreen.js";
 import { ResourceBar } from "./components/ResourceBar.js";
 import { SoundToggle } from "./components/SoundToggle.js";
-import { UpgradeCard } from "./components/UpgradeCard.js";
 import { ThreeScene } from "./three/ThreeScene.js";
 import { GameManager } from "./GameManager.js";
 import { getElement } from "./utils/domHelper.js";
 import { UpgradeToggle } from "./components/UpgradeToggle.js";
+import { upgradeConfig } from "./config/upgrades.js";
 import gsap from "https://esm.sh/gsap";
 /**
  * Clase principal que orquesta el flujo completo:
@@ -60,21 +60,15 @@ class App {
         // 6) Creamos SoundToggle (música)
         this.soundToggle = new SoundToggle(this.threeScene.music);
 
-        // 7) Referencias para la creación dinámica de tarjetas
+        // 7) Contenedor donde se generarán las tarjetas
         this.upgradeContainer = getElement(".upgrade-bar .content-scroll");
-        const tplContainer = getElement("#card-templates");
-        this.cardTemplates = {};
-        tplContainer.querySelectorAll("template").forEach((tpl) => {
-          const type = tpl.id.replace("tpl-", "");
-          this.cardTemplates[type] = tpl;
-        });
 
         // 8) Instanciamos GameManager inyectando dependencias
         this.gameManager = new GameManager(
           this.threeScene,
           this.resourceBar,
           this.upgradeContainer,
-          this.cardTemplates,
+          upgradeConfig,
           this.soundToggle
         );
 

@@ -19,14 +19,18 @@ export class GameManager {
    * @param {Array<UpgradeCard>} upgradeCards - lista de instancias UpgradeCard (una por cada tarjeta).
    * @param {SoundToggle} soundToggle - instancia de SoundToggle (para reproducir música/SFX).
    */
-  constructor(threeScene, resourceBar, upgradeContainer, templates, soundToggle) {
+  constructor(threeScene, resourceBar, upgradeContainer, upgradeDefs, soundToggle) {
     this.threeScene = threeScene;
     this.resourceBar = resourceBar;
     this.upgradeContainer = upgradeContainer;
-    this.cardTemplates = templates;
+    this.upgradeDefs = {};
+    this.upgradeOrder = [];
+    upgradeDefs.sort((a, b) => a.order - b.order).forEach((cfg) => {
+      this.upgradeDefs[cfg.type] = cfg;
+      this.upgradeOrder.push(cfg.type);
+    });
     this.soundToggle = soundToggle;
     this.upgradeCards = [];
-    this.upgradeOrder = ["contratar", "avispa", "produccion", "mejorar-colmena", "pato"];
 
     // personajes del juego
     this.bees = [];
@@ -55,32 +59,50 @@ export class GameManager {
       pollenRatio: 0.2,
     };
 
-    this.cardLevelReq = {
-      contratar: 1,
-      avispa: 2,
-      produccion: 5,
-      'mejorar-colmena': 7,
-      pato: 10
-    };
 
     // Configuramos el hiveSpeedMultiplier en ThreeScene
     // Equivalente a: 1 + this.hiveLevel * 0.05
     this.threeScene.setHiveSpeedMultiplier(() => 1 + this.hiveLevel * 0.05);
 
-    // Creamos primeras tarjetas (bee desbloqueada + wasp bloqueada)
-    this._createCard("contratar");
-    const wasp = this._createCard("avispa");
-    wasp.setLocked(true, `Nivel ${this.cardLevelReq["avispa"]}`);
-    this._updateCardLocks();
-
+    // Crear primeras tarjetas
+    if (this.upgradeOrder.length > 0) {
+      this._createCard(this.upgradeOrder[0]);
+    }
+    if (this.upgradeOrder.length > 1) {
+      const secondType = this.upgradeOrder[1];
+      const card = this._createCard(secondType);
+      const req = this.upgradeDefs[secondType].levelReq;
+      if (req) card.setLocked(this.userLevel < req, `Nivel ${req}`);
+    }
     this._updateCardLocks();
 
   }
 
   _createCard(type) {
-    const tpl = this.cardTemplates[type];
-    if (!tpl) return null;
-    const element = tpl.content.firstElementChild.cloneNode(true);
+    const def = this.upgradeDefs[type];
+    if (!def) return null;
+    const element = document.createElement('div');
+    element.classList.add('upgrade-card');
+    element.dataset.upgrade = type;
+
+    element.innerHTML = `
+      <div class="icon"><img src="${def.icon}" alt="${def.name}"></div>
+      <div class="info">
+        <h2>${def.name}</h2>
+        <p class="description">${def.description}</p>
+        <div class="cost">
+          <span class="icon"><img src="${def.costIcon}" alt="${def.costResource}"></span>
+          <span data-cost>0</span>
+        </div>
+        ${def.showAmount ? '<div class="count">Amount: <span data-value>0</span></div>' : ''}
+      </div>
+    `;
+    if (def.levelReq !== null) {
+      const lock = document.createElement('div');
+      lock.className = 'lock-overlay';
+      lock.innerHTML = '<span class="lock-icon">🔒</span><span class="lock-text">Locked</span>';
+      element.appendChild(lock);
+    }
     this.upgradeContainer.appendChild(element);
     const card = new UpgradeCard(element, (upgradeType) => {
       switch (upgradeType) {
@@ -107,35 +129,6 @@ export class GameManager {
     return card;
   }
 
-  _createCard(type) {
-    const tpl = this.cardTemplates[type];
-    if (!tpl) return null;
-    const element = tpl.content.firstElementChild.cloneNode(true);
-    this.upgradeContainer.appendChild(element);
-    const card = new UpgradeCard(element, (upgradeType) => {
-      switch (upgradeType) {
-        case "contratar":
-          this._buyBee();
-          break;
-        case "avispa":
-          this._buyWasp();
-          break;
-        case "pato":
-          this._buyDuck();
-          break;
-        case "produccion":
-          this._buyProd();
-          break;
-        case "mejorar-colmena":
-          this._buyHive();
-          break;
-        default:
-          console.warn(`Upgrade desconocido: ${upgradeType}`);
-      }
-    });
-    this.upgradeCards.push(card);
-    return card;
-  }
 
   // -------------------------------------------------
   // Métodos para cálculos de costes (idénticos a ColmenaApp)
@@ -188,8 +181,11 @@ export class GameManager {
 
   _updateCardLocks() {
     this.upgradeCards.forEach((card) => {
-      const req = this.cardLevelReq[card.upgradeType] ?? 1;
-      card.setLocked(this.userLevel < req, `Nivel ${req}`);
+      const def = this.upgradeDefs[card.upgradeType];
+      const req = def.levelReq;
+      if (req) {
+        card.setLocked(this.userLevel < req, `Nivel ${req}`);
+      }
     });
 
     // Mostrar siguiente tarjeta si la última está desbloqueada
@@ -199,36 +195,10 @@ export class GameManager {
       const nextType = this.upgradeOrder[lastIndex + 1];
       if (!this.upgradeCards.find((c) => c.upgradeType === nextType)) {
         const newCard = this._createCard(nextType);
-        const req = this.cardLevelReq[nextType] ?? 1;
-        newCard.setLocked(this.userLevel < req, `Nivel ${req}`);
+        const req = this.upgradeDefs[nextType].levelReq;
+        if (req) newCard.setLocked(this.userLevel < req, `Nivel ${req}`);
       }
     }
-  }
-
-  _updateCardLocks() {
-    this.upgradeCards.forEach((card) => {
-      const req = this.cardLevelReq[card.upgradeType] ?? 1;
-      card.setLocked(this.userLevel < req, `Nivel ${req}`);
-    });
-
-    // Mostrar siguiente tarjeta si la última está desbloqueada
-    const lastCard = this.upgradeCards[this.upgradeCards.length - 1];
-    const lastIndex = this.upgradeOrder.indexOf(lastCard.upgradeType);
-    if (!lastCard.isLocked && lastIndex < this.upgradeOrder.length - 1) {
-      const nextType = this.upgradeOrder[lastIndex + 1];
-      if (!this.upgradeCards.find((c) => c.upgradeType === nextType)) {
-        const newCard = this._createCard(nextType);
-        const req = this.cardLevelReq[nextType] ?? 1;
-        newCard.setLocked(this.userLevel < req, `Nivel ${req}`);
-      }
-    }
-  }
-
-  _updateCardLocks() {
-    this.upgradeCards.forEach(card => {
-      const req = this.cardLevelReq[card.upgradeType] ?? 1;
-      card.setLocked(this.userLevel < req);
-    });
   }
 
   // -------------------------------------------------

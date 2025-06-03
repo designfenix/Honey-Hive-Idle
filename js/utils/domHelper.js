@@ -28,4 +28,3 @@ export function createElement(tag, options = {}, parent) {
   if (parent) parent.appendChild(el);
   return el;
 }
-import gsap from "https://esm.sh/gsap@3.13.0";

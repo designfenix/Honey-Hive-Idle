@@ -1,6 +1,5 @@
 // js/components/UpgradeCard.js
 
-import { getElement, createElement } from "../utils/domHelper.js";
 import { formatNumber } from "../utils/formatNumber.js";
 
 /**
@@ -24,16 +23,8 @@ export class UpgradeCard {
     this.lockOverlay = element.querySelector('.lock-overlay');
     this.isLocked = this.element.classList.contains('locked');
 
-    this.costEl = element.querySelector(".cost span:not(.icon)"); // el <span> que contiene el número
-    // Dependiendo del tipo de tarjeta, el valor puede estar en lugares distintos
-    if (this.upgradeType === "produccion") {
-      this.valueEl = element.querySelector("#prod-value");
-    } else if (this.upgradeType === "mejorar-colmena") {
-      this.valueEl = element.querySelector("#hive-speed");
-    } else {
-      // Abejas y avispas muestran la cantidad dentro de .count
-      this.valueEl = element.querySelector(".count span");
-    }
+    this.costEl = element.querySelector('[data-cost]');
+    this.valueEl = element.querySelector('[data-value]');
 
     // Listener al botón de compra
     this.element.addEventListener("click", () => {
