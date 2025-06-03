@@ -12,7 +12,7 @@ import { formatNumber } from "../utils/formatNumber.js";
  * - Velocidad de la colmena (“speed-value”).
  *
  * Se instancia pasándole las referencias a los elementos del DOM,
- * luego se llama a `refresh(beesCount, waspsCount, pollen, nectar, speedPercent)`.
+ * luego se llama a `refresh(beesCount, waspsCount, pollen, nectar, speedPercent, userLevel, levelRequirement, lifetimePollen)`.
  */
 export class ResourceBar {
   constructor() {
@@ -33,6 +33,9 @@ export class ResourceBar {
    * @param {number} pollen
    * @param {number} nectar
    * @param {number} speedPercent - ya en porcentaje (por ejemplo 120 para “120%”) sin el símbolo
+   * @param {number} userLevel - nivel actual del usuario
+   * @param {number} levelRequirement - polen total necesario para el siguiente nivel
+   * @param {number} lifetimePollen - polen acumulado a lo largo de la partida
    */
   refresh(
     beesCount,
@@ -41,19 +44,24 @@ export class ResourceBar {
     nectar,
     speedPercent,
     userLevel,
-    levelRequirement
+    levelRequirement,
+    lifetimePollen
   ) {
     this.beeEl.textContent = formatNumber(beesCount);
     this.waspEl.textContent = formatNumber(waspsCount);
     this.pollenEl.textContent = formatNumber(Math.floor(pollen));
     this.nectarEl.textContent = formatNumber(Math.floor(nectar));
     this.speedEl.textContent = formatNumber(Math.round(speedPercent));
-    if (userLevel && levelRequirement) {
+    if (
+      userLevel !== undefined &&
+      levelRequirement !== undefined &&
+      lifetimePollen !== undefined
+    ) {
       this.levelEl.textContent = userLevel;
-      const progress = Math.min(pollen / levelRequirement, 1);
+      const progress = Math.min(lifetimePollen / levelRequirement, 1);
       this.levelFillEl.style.width = `${progress * 100}%`;
       this.levelProgressTextEl.textContent = `${formatNumber(
-        Math.floor(pollen)
+        Math.floor(lifetimePollen)
       )} / ${formatNumber(levelRequirement)}`;
     }
   }

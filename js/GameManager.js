@@ -31,6 +31,8 @@ export class GameManager {
     this.wasps = [];
     this.nectar = 0;
     this.pollen = 0;
+    // Polén acumulado durante toda la partida (no se reduce al gastar)
+    this.pollenLifetime = 0;
     this.prodLevel = 0;
     this.hiveLevel = 0;
     this.userLevel = 1;
@@ -109,7 +111,7 @@ export class GameManager {
   }
 
   _checkLevelUp() {
-    while (this.pollen >= this._levelRequirement(this.userLevel)) {
+    while (this.pollenLifetime >= this._levelRequirement(this.userLevel)) {
       this.userLevel++;
     }
   }
@@ -189,7 +191,8 @@ export class GameManager {
       this.nectar,
       speedPercent,
       this.userLevel,
-      levelReq
+      levelReq,
+      this.pollenLifetime
     );
 
     // 2. Refrescar cada UpgradeCard con su coste, valor y si se puede pagar:
@@ -224,10 +227,13 @@ export class GameManager {
   // Producción de recursos cada frame (llamado por ThreeScene)
   // -------------------------------------------------
   productionLoop(delta) {
-    // 1) Polén base por abejas “libres”
+    // 1) Guardamos el valor inicial para calcular polen generado en este ciclo
+    const pollenBefore = this.pollen;
+
+    // 2) Polén base por abejas “libres”
     this.pollen += this.bees.length * delta;
 
-    // 2) Néctar y polen derivado (según prodLevel y hive speed)
+    // 3) Néctar y polen derivado (según prodLevel y hive speed)
     const nectarRate =
       this.bees.length *
       this._nectarPerBee() *
@@ -235,10 +241,16 @@ export class GameManager {
     this.nectar += nectarRate * delta;
     this.pollen += nectarRate * this.baseRates.pollenRatio * delta;
 
-    // 3) Polén extra por avispas
+    // 4) Polén extra por avispas
     this.pollen += this.wasps.length * this.waspPollenPerSec * delta;
 
-    // 4) Movimiento en órbita (el propio ThreeScene itera internamente bees y wasps)
+    // Cantidad total generada en este ciclo (solo suma si es positiva)
+    const produced = this.pollen - pollenBefore;
+    if (produced > 0) {
+      this.pollenLifetime += produced;
+    }
+
+    // 5) Movimiento en órbita (el propio ThreeScene itera internamente bees y wasps)
     const hiveCenter = new THREE.Vector3().setFromMatrixPosition(
       this.threeScene.hive.matrixWorld
     );
@@ -251,7 +263,7 @@ export class GameManager {
 
     this._checkLevelUp();
 
-    // 5) Finalmente, actualizamos UI para reflejar cambios
+    // 6) Finalmente, actualizamos UI para reflejar cambios
     this._updateAllUI();
   }
 }
