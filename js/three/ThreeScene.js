@@ -473,8 +473,7 @@ export class ThreeScene {
   // -----------------------------------
   // 16. Crear nueva abeja en la escena
   // -----------------------------------
-  spawnBee() {
-    this.lightCone.triggerAnimation();
+  spawnBee() {    
     this.beeSound.stop();
     this.beeSound.play();
     const gltf = this.assets.beeGLTF;
