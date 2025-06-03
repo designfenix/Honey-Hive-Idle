@@ -11,8 +11,19 @@ export const upgradeConfig = [
     levelReq: null
   },
   {
-    type: 'avispa',
+    type: 'produccion',
     order: 1,
+    icon: 'assets/images/icon-production.png',
+    costIcon: 'assets/images/icon-nectar.png',
+    name: 'Improve Production',
+    description: '+<span data-value></span>% / bee',
+    costResource: 'nectar',
+    showAmount: false,
+    levelReq: null
+  },
+  {
+    type: 'avispa',
+    order: 2,
     icon: 'assets/images/icon-wasp.png',
     costIcon: 'assets/images/icon-polen.png',
     name: 'Hire Wasp',
@@ -20,17 +31,6 @@ export const upgradeConfig = [
     costResource: 'pollen',
     showAmount: true,
     levelReq: 2
-  },
-  {
-    type: 'produccion',
-    order: 2,
-    icon: 'assets/images/icon-production.png',
-    costIcon: 'assets/images/icon-nectar.png',
-    name: 'Improve Production',
-    description: '+<span data-value></span>% / bee',
-    costResource: 'nectar',
-    showAmount: false,
-    levelReq: 5
   },
   {
     type: 'mejorar-colmena',
