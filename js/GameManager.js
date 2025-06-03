@@ -107,6 +107,36 @@ export class GameManager {
     return card;
   }
 
+  _createCard(type) {
+    const tpl = this.cardTemplates[type];
+    if (!tpl) return null;
+    const element = tpl.content.firstElementChild.cloneNode(true);
+    this.upgradeContainer.appendChild(element);
+    const card = new UpgradeCard(element, (upgradeType) => {
+      switch (upgradeType) {
+        case "contratar":
+          this._buyBee();
+          break;
+        case "avispa":
+          this._buyWasp();
+          break;
+        case "pato":
+          this._buyDuck();
+          break;
+        case "produccion":
+          this._buyProd();
+          break;
+        case "mejorar-colmena":
+          this._buyHive();
+          break;
+        default:
+          console.warn(`Upgrade desconocido: ${upgradeType}`);
+      }
+    });
+    this.upgradeCards.push(card);
+    return card;
+  }
+
   // -------------------------------------------------
   // Métodos para cálculos de costes (idénticos a ColmenaApp)
   // -------------------------------------------------
@@ -153,6 +183,25 @@ export class GameManager {
         this.threeScene.lightCone.triggerAnimation();
       }
       this._updateCardLocks();
+    }
+  }
+
+  _updateCardLocks() {
+    this.upgradeCards.forEach((card) => {
+      const req = this.cardLevelReq[card.upgradeType] ?? 1;
+      card.setLocked(this.userLevel < req, `Nivel ${req}`);
+    });
+
+    // Mostrar siguiente tarjeta si la última está desbloqueada
+    const lastCard = this.upgradeCards[this.upgradeCards.length - 1];
+    const lastIndex = this.upgradeOrder.indexOf(lastCard.upgradeType);
+    if (!lastCard.isLocked && lastIndex < this.upgradeOrder.length - 1) {
+      const nextType = this.upgradeOrder[lastIndex + 1];
+      if (!this.upgradeCards.find((c) => c.upgradeType === nextType)) {
+        const newCard = this._createCard(nextType);
+        const req = this.cardLevelReq[nextType] ?? 1;
+        newCard.setLocked(this.userLevel < req, `Nivel ${req}`);
+      }
     }
   }
 
