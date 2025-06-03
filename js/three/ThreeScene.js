@@ -8,8 +8,11 @@ import { BokehPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocess
 import { ShaderPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/ShaderPass.js";
 import { GammaCorrectionShader } from "https://esm.sh/three@0.174.0/examples/jsm/shaders/GammaCorrectionShader.js";
 import { PMREMGenerator, HalfFloatType } from "https://esm.sh/three@0.174.0";
+
 import Stats from "https://esm.sh/stats.js@0.17.0";
 import gsap from "https://esm.sh/gsap@3.13.0";
+import { LightConeEffect } from "../components/LightConeEffect.js";
+
 
 
 // Parámetros estáticos de ThreeScene
@@ -62,6 +65,20 @@ export class ThreeScene {
     this._initVegetation();
     this._initHive();
     this._initBeesMixer();
+    this._initDucksMixer();
+
+    this.lightCone = new LightConeEffect(
+      this.scene,
+      this.camera,
+      this.renderer,
+      new THREE.Vector3(0, 1, 0),
+      {
+        height: 10,         // Altura total del cono
+        radius: 0.5,          // Radio de la base
+        particleCount: 300, // Cantidad de partículas (“chispas”)
+        coneColor: 0xffeeaa // Color ligeramente amarillento, por ejemplo
+      }
+    );
 
     // 9. Stats (FPS)
     //this.stats = new Stats();
@@ -433,6 +450,12 @@ export class ThreeScene {
     // No estamos reproduciendo ninguna animación hasta que se spawnee una abeja/avispa
   }
 
+  _initDucksMixer() {
+    const gltf = this.assets.duckGLTF;
+    this.duckMixer = new THREE.AnimationMixer(this.scene);
+    // No estamos reproduciendo ninguna animación hasta que se spawnee un pato
+  }
+
   // -----------------------------------
   // 14. Setter para hiveSpeedMultiplier (invocado desde GameManager)
   // -----------------------------------
@@ -451,6 +474,7 @@ export class ThreeScene {
   // 16. Crear nueva abeja en la escena
   // -----------------------------------
   spawnBee() {
+    this.lightCone.triggerAnimation();
     this.beeSound.stop();
     this.beeSound.play();
     const gltf = this.assets.beeGLTF;
@@ -563,41 +587,195 @@ export class ThreeScene {
     return wasp;
   }
 
-  // -----------------------------------
-  // 18. Lógica de movimiento en órbita
-  // -----------------------------------
-  _moveInOrbit(entity, delta, hiveCenter) {
-    const ud = entity.userData;
-    if (ud.phase === "exiting") {
-      const dir = new THREE.Vector3().subVectors(ud.exitPos, entity.position);
-      const dist = dir.length();
-      if (dist < 0.05) {
-        // Cambiar a fase “orbit”
-        const dx = entity.position.x - hiveCenter.x;
-        const dz = entity.position.z - hiveCenter.z;
-        const currentAngle = Math.atan2(dz, dx);
-        ud.orbit.angle =
-          currentAngle - this.clock.getElapsedTime() * ud.orbit.speed;
-        ud.orbit.radius = Math.hypot(dx, dz);
-        ud.orbit.baseY = entity.position.y;
-        ud.phase = "orbit";
-      } else {
-        dir.normalize();
-        entity.position.addScaledVector(dir, delta * 1.2);
-      }
-    } else {
-      // Fase “orbit”
-      const { angle, radius, baseY, speed } = ud.orbit;
-      const t = this.clock.getElapsedTime();
-      const a = angle + t * speed;
-      entity.position.x = hiveCenter.x + Math.cos(a) * radius;
-      entity.position.z = hiveCenter.z + Math.sin(a) * radius;
-      // Oscilación vertical
-      const verticalOsc = entity.userData === ud.exitPos ? 0.2 : 0.3;
-      entity.position.y = baseY + Math.sin(t * speed * 2 + angle) * verticalOsc;
-      entity.rotation.y = -a + Math.PI;
+  /**
+ * spawnDuck(): crea un pato que:
+ *  1) Nace en un punto aleatorio del bosque (radio 8–16 alrededor de la colmena, Y=0).
+ *  2) Camina en línea recta hasta un punto a radio fijo (4) de la colmena, también a Y=0.
+ *  3) Luego pasa a fase “orbit” y gira alrededor de la colmena a nivel del suelo.
+ *
+ * Devuelve el mesh del pato; quien lo llame (GameManager) hará this.ducks.push(duck).
+ */
+spawnDuck() {
+  const gltf = this.assets.duckGLTF;
+  const duck = gltf.scene.clone();
+  duck.traverse((node) => {
+    if (node.isMesh) node.castShadow = node.receiveShadow = true;
+  });
+  duck.scale.setScalar(0.5);
+
+  // ───────────────────────────────────────────────────────
+  // 1) Obtener la posición real de la colmena (hiveCenter)
+  // ───────────────────────────────────────────────────────
+  this.hive.updateMatrixWorld(true);
+  const hiveCenter = new THREE.Vector3().setFromMatrixPosition(this.hive.matrixWorld);
+  // hiveCenter.y = 0.9, pero no lo usaremos para la Y del pato.
+
+  // ───────────────────────────────────────────────────────
+  // 2) Calcular punto aleatorio “en el bosque” a nivel del suelo
+  // ───────────────────────────────────────────────────────
+  const rMin = 8;
+  const rMax = 16;
+  const angle0 = Math.random() * Math.PI * 2;
+  const radius0 = THREE.MathUtils.lerp(rMin, rMax, Math.random());
+
+  // offset relativo en X/Z
+  const offsetSpawn = new THREE.Vector3(
+    Math.cos(angle0) * radius0,
+    0,                    // forzamos Y=0 (suelo)
+    Math.sin(angle0) * radius0
+  );
+
+  // sumamos X/Z al hiveCenter, pero Y la dejamos en 0
+  const spawnPos = new THREE.Vector3(
+    hiveCenter.x + offsetSpawn.x,
+    0,                    // suelo, no hiveCenter.y
+    hiveCenter.z + offsetSpawn.z
+  );
+  duck.position.copy(spawnPos);
+
+  // ───────────────────────────────────────────────────────
+  // 3) Calcular punto “orbitStartPos” a radio 4, también a nivel del suelo
+  // ───────────────────────────────────────────────────────
+  const orbitRadius = 4;
+  const offsetOrbitStart = new THREE.Vector3(
+    Math.cos(angle0) * orbitRadius,
+    0,                    // forzamos Y=0 (suelo)
+    Math.sin(angle0) * orbitRadius
+  );
+  const orbitStartPos = new THREE.Vector3(
+    hiveCenter.x + offsetOrbitStart.x,
+    0,                    // suelo
+    hiveCenter.z + offsetOrbitStart.z
+  );
+
+  // ───────────────────────────────────────────────────────
+  // 4) Calculamos dirección de caminata y velocidad
+  // ───────────────────────────────────────────────────────
+  const walkDir = new THREE.Vector3().subVectors(orbitStartPos, spawnPos).normalize();
+  const walkSpeed = 0.5 + Math.random() * 0.2; // entre 0.5 y 0.7 u/s
+
+  duck.userData = {
+    phase: "walking",
+    walk: {
+      direction: walkDir,
+      target: orbitStartPos.clone(),
+      speed: walkSpeed
+    },
+    orbit: {
+      angle: angle0,
+      radius: orbitRadius,
+      baseY: 0, // pato orbitará a nivel del suelo
+      speed: (0.2 + Math.random() * 0.2) * this._hiveSpeedMultiplier()
     }
+  };
+
+  this.scene.add(duck);
+
+  // ───────────────────────────────────────────────────────
+  // 5) Reproducir animación si existe
+  // ───────────────────────────────────────────────────────
+  if (gltf.animations && gltf.animations.length > 0 && this.duckMixer) {
+    this.duckMixer.clipAction(gltf.animations[3], duck).play();
   }
+
+  return duck;
+}
+
+
+
+  /**
+ * _moveInOrbit(entity, delta, hiveCenter):
+ *  - Si entity.userData.phase === "walking", avanza hacia walk.target.
+ *    Al llegar (distancia < 0.1), pasa a “orbit”.
+ *  - Si entity.userData.phase === "exiting", ejecuta la lógica normal de salida del panal.
+ *  - Si entity.userData.phase === "orbit", orbita en círculo alrededor de hiveCenter.
+ */
+_moveInOrbit(entity, delta, hiveCenter) {
+  const ud = entity.userData;
+
+  // ——— 1) FASE “walking” (emos usado esto para los patos) ———
+  if (ud.phase === "walking") {
+    const toTarget = new THREE.Vector3().subVectors(ud.walk.target, entity.position);
+    const distToTarget = toTarget.length();
+
+    if (distToTarget < 0.1) {
+      // Llegó al punto de inicio de órbita
+      entity.position.copy(ud.walk.target);
+
+      // Calculamos currentAngle en el punto de llegada
+      const dx = entity.position.x - hiveCenter.x;
+      const dz = entity.position.z - hiveCenter.z;
+      const currentAngle = Math.atan2(dz, dx);
+
+      // Compensamos el tiempo para que, al hacer a = angle + t*speed, salga currentAngle
+      const t = this.clock.getElapsedTime();
+      ud.orbit.angle = currentAngle - t * ud.orbit.speed;
+      ud.orbit.baseY = 0; // pato orbitará a nivel de suelo
+      ud.phase = "orbit";
+      return;
+    }
+
+    // Sigue caminando
+    toTarget.normalize();
+    entity.position.addScaledVector(toTarget, ud.walk.speed * delta);
+    const yaw = Math.atan2(toTarget.x, toTarget.z) + Math.PI;
+    entity.rotation.set(0, yaw, 0);
+    return;
+  }
+
+  // ——— 2) FASE “exiting” (abejas y avispas salen del panal) ———
+  if (ud.phase === "exiting") {
+    const dir = new THREE.Vector3().subVectors(ud.exitPos, entity.position);
+    const dist = dir.length();
+
+    if (dist < 0.05) {
+      // Aquí la abeja/avispa acaba de salir: calculamos ángulo y compensamos
+      const dx = entity.position.x - hiveCenter.x;
+      const dz = entity.position.z - hiveCenter.z;
+      const currentAngle = Math.atan2(dz, dx);
+
+      const t = this.clock.getElapsedTime();
+      ud.orbit.angle = currentAngle - t * ud.orbit.speed;
+
+      // BaseY será la altura actual de la abeja al salir (por ejemplo 0.05 o lo que toque)
+      ud.orbit.baseY = entity.position.y;
+
+      ud.orbit.radius = Math.hypot(dx, dz);
+      ud.phase = "orbit";
+    } else {
+      dir.normalize();
+      entity.position.addScaledVector(dir, delta * 1.2);
+    }
+    return;
+  }
+
+  // ——— 3) FASE “orbit” (abejas, avispas y patos) ———
+  if (ud.phase === "orbit") {
+    const { angle, radius, baseY, speed } = ud.orbit;
+    const t = this.clock.getElapsedTime();
+    const a = angle + t * speed;
+
+    entity.position.x = hiveCenter.x + Math.cos(a) * radius;
+    entity.position.z = hiveCenter.z + Math.sin(a) * radius;
+
+    if (baseY === 0) {
+      // Patos: baseY=0 → a nivel del suelo
+      entity.position.y = 0;
+    } else {
+      // Abejas/avispas: aplicamos la oscilación vertical
+      const verticalOsc = 0.3;
+      entity.position.y = baseY + Math.sin(t * speed * 2 + angle) * verticalOsc;
+    }
+
+    // Rotamos hacia fuera de la órbita
+    entity.rotation.y = -a + Math.PI;
+  }
+}
+
+
+
+
+
 
   // -----------------------------------
   // 19. Iniciar bucle de render
@@ -609,6 +787,7 @@ export class ThreeScene {
 
       // Actualizar Mixer
       if (this.beeMixer) this.beeMixer.update(delta);
+      if (this.duckMixer) this.duckMixer.update(delta);
 
       // Producción y movimiento externo desde GameManager
       if (typeof this.onBeforeRender === "function") {
@@ -629,6 +808,9 @@ export class ThreeScene {
       this.controls.autoRotate = true;
       this.controls.autoRotateSpeed = 0.3;
       this.controls.target.set(0, 1, 0);
+
+
+      this.lightCone.update(delta);
 
       // Actualizar Stats y controles
       //this.stats.update();

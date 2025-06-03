@@ -18,6 +18,7 @@ export class ResourceBar {
   constructor() {
     this.beeEl = getElement("#bee-value");
     this.waspEl = getElement("#wasp-value");
+    this.duckEl = getElement("#duck-value");
     this.pollenEl = getElement("#pollen-value");
     this.nectarEl = getElement("#nectar-value");
     this.speedEl = getElement("#speed-value");
@@ -40,6 +41,7 @@ export class ResourceBar {
   refresh(
     beesCount,
     waspsCount,
+    ducksCount,
     pollen,
     nectar,
     speedPercent,
@@ -49,6 +51,7 @@ export class ResourceBar {
   ) {
     this.beeEl.textContent = formatNumber(beesCount);
     this.waspEl.textContent = formatNumber(waspsCount);
+    this.duckEl.textContent = formatNumber(ducksCount);
     this.pollenEl.textContent = formatNumber(Math.floor(pollen));
     this.nectarEl.textContent = formatNumber(Math.floor(nectar));
     this.speedEl.textContent = formatNumber(Math.round(speedPercent));
