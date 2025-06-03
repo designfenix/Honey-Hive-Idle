@@ -49,6 +49,11 @@ Honey-Hive-Idle/
 - Node.js (v14 o superior)
 - npm (v6 o superior)
 
+### Modelos 3D
+
+Los archivos de modelo (`*.glb`) no se incluyen en el repositorio. Debes
+descargarlos aparte y colocarlos en `assets/model/` antes de ejecutar el juego.
+
 ## Instalación
 
 1. Clona el repositorio:
