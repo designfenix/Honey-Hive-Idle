@@ -21,6 +21,9 @@ export class ResourceBar {
     this.pollenEl = getElement("#pollen-value");
     this.nectarEl = getElement("#nectar-value");
     this.speedEl = getElement("#speed-value");
+    this.levelEl = getElement("#user-level");
+    this.levelFillEl = getElement("#level-bar-fill");
+    this.levelProgressTextEl = getElement("#level-progress-text");
   }
 
   /**
@@ -31,11 +34,27 @@ export class ResourceBar {
    * @param {number} nectar
    * @param {number} speedPercent - ya en porcentaje (por ejemplo 120 para “120%”) sin el símbolo
    */
-  refresh(beesCount, waspsCount, pollen, nectar, speedPercent) {
+  refresh(
+    beesCount,
+    waspsCount,
+    pollen,
+    nectar,
+    speedPercent,
+    userLevel,
+    levelRequirement
+  ) {
     this.beeEl.textContent = formatNumber(beesCount);
     this.waspEl.textContent = formatNumber(waspsCount);
     this.pollenEl.textContent = formatNumber(Math.floor(pollen));
     this.nectarEl.textContent = formatNumber(Math.floor(nectar));
     this.speedEl.textContent = formatNumber(Math.round(speedPercent));
+    if (userLevel && levelRequirement) {
+      this.levelEl.textContent = userLevel;
+      const progress = Math.min(pollen / levelRequirement, 1);
+      this.levelFillEl.style.width = `${progress * 100}%`;
+      this.levelProgressTextEl.textContent = `${formatNumber(
+        Math.floor(pollen)
+      )} / ${formatNumber(levelRequirement)}`;
+    }
   }
 }

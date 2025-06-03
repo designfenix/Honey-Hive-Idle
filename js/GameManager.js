@@ -33,6 +33,7 @@ export class GameManager {
     this.pollen = 0;
     this.prodLevel = 0;
     this.hiveLevel = 0;
+    this.userLevel = 1;
 
     // Parámetros iniciales y ratios (copiados de ColmenaApp.DEFAULTS)
     this.initialFreeBees = 1;
@@ -103,6 +104,16 @@ export class GameManager {
     return this.baseRates.nectarPerBee * (1 + this.prodLevel * 0.1);
   }
 
+  _levelRequirement(level) {
+    return Math.floor(15000 * Math.pow(level, 1.7));
+  }
+
+  _checkLevelUp() {
+    while (this.pollen >= this._levelRequirement(this.userLevel)) {
+      this.userLevel++;
+    }
+  }
+
   // -------------------------------------------------
   // Lógica de compra (cada método actualiza estado, reproduce SFX y llama a updateAll)
   // -------------------------------------------------
@@ -170,12 +181,15 @@ export class GameManager {
   _updateAllUI() {
     // 1. Refrescar ResourceBar:
     const speedPercent = (1 + this.hiveLevel * 0.05) * 100;
+    const levelReq = this._levelRequirement(this.userLevel);
     this.resourceBar.refresh(
       this.bees.length,
       this.wasps.length,
       this.pollen,
       this.nectar,
-      speedPercent
+      speedPercent,
+      this.userLevel,
+      levelReq
     );
 
     // 2. Refrescar cada UpgradeCard con su coste, valor y si se puede pagar:
@@ -234,6 +248,8 @@ export class GameManager {
     this.wasps.forEach((wasp) =>
       this.threeScene._moveInOrbit(wasp, delta, hiveCenter)
     );
+
+    this._checkLevelUp();
 
     // 5) Finalmente, actualizamos UI para reflejar cambios
     this._updateAllUI();
