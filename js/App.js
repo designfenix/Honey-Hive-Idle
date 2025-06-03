@@ -60,17 +60,21 @@ class App {
         // 6) Creamos SoundToggle (música)
         this.soundToggle = new SoundToggle(this.threeScene.music);
 
-        // 7) Creamos todas las UpgradeCards a partir del DOM presente
-        const upgradeEls = document.querySelectorAll(".upgrade-card");
-        this.upgradeCards = Array.from(upgradeEls).map(
-          (el) => new UpgradeCard(el, null /* se asigna luego en GameManager */)
-        );
+        // 7) Referencias para la creación dinámica de tarjetas
+        this.upgradeContainer = getElement(".upgrade-bar .content-scroll");
+        const tplContainer = getElement("#card-templates");
+        this.cardTemplates = {};
+        tplContainer.querySelectorAll("template").forEach((tpl) => {
+          const type = tpl.id.replace("tpl-", "");
+          this.cardTemplates[type] = tpl;
+        });
 
-        // 8) Instanciamos GameManager inyectando dependencies
+        // 8) Instanciamos GameManager inyectando dependencias
         this.gameManager = new GameManager(
           this.threeScene,
           this.resourceBar,
-          this.upgradeCards,
+          this.upgradeContainer,
+          this.cardTemplates,
           this.soundToggle
         );
 

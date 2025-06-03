@@ -391,6 +391,8 @@ button:hover {
   visibility: visible;
 }
 .upgrade-card .lock-overlay {
+  opacity: 0;
+  visibility: hidden;
   position: absolute;
   inset: 0;
   background: url("../assets/images/wood-texture.png") center center repeat;
