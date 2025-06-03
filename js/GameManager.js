@@ -265,9 +265,6 @@ export class GameManager {
     const levelReq = this._levelRequirement(this.userLevel);
     const levelProgress = this.pollenLifetime - this.levelStartPollen;
     this.resourceBar.refresh(
-      this.bees.length,
-      this.wasps.length,
-      this.ducks.length,
       this.pollen,
       this.nectar,
       speedPercent,
