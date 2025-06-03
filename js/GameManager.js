@@ -3,7 +3,6 @@
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { ResourceBar } from "./components/ResourceBar.js";
 import { UpgradeCard } from "./components/UpgradeCard.js";
-import { formatNumber } from "./utils/formatNumber.js";
 
 /**
  * GameManager se encarga de:
@@ -26,11 +25,13 @@ export class GameManager {
     this.upgradeCards = upgradeCards;
     this.soundToggle = soundToggle;
 
-    // Estado de juego
+    // personajes del juego
     this.bees = [];
     this.wasps = [];
-    this.nectar = 0;
-    this.pollen = 0;
+    this.ducks = [];
+    // Recursos
+    this.nectar = 10000000;
+    this.pollen = 10000000;
     this.prodLevel = 0;
     this.hiveLevel = 0;
 
@@ -61,6 +62,9 @@ export class GameManager {
           case "avispa":
             this._buyWasp();
             break;
+          case "pato":
+            this._buyDuck();
+            break;
           case "produccion":
             this._buyProd();
             break;
@@ -72,6 +76,7 @@ export class GameManager {
         }
       };
     });
+
   }
 
   // -------------------------------------------------
@@ -89,6 +94,11 @@ export class GameManager {
   _calcWaspCost() {
     const w = this.wasps.length;
     return Math.ceil(this.baseWaspCost * Math.pow(this.waspCostRate, w));
+  }
+
+  _calcDuckCost() {
+    const d = this.ducks.length;
+    return Math.ceil(50 * Math.pow(1.2, d));
   }
 
   _calcProdCost() {
@@ -131,6 +141,18 @@ export class GameManager {
     return true;
   }
 
+  _buyDuck() {
+    const cost = this._calcDuckCost();
+    if (this.pollen < cost) return false;
+    this.pollen -= cost;
+
+    const duckEntity = this.threeScene.spawnDuck();
+    this.ducks.push(duckEntity);
+
+    this._updateAllUI();
+    return true;
+  }
+
   _buyProd() {
     // Aquí, para mantener SFX igual al original: se reproduce plop antes
     this.threeScene.plopSound.stop();
@@ -156,6 +178,7 @@ export class GameManager {
     // Cada colmena nueva aumenta velocidad de órbita de bees/wasps
     this.bees.forEach((bee) => (bee.userData.orbit.speed *= 1.05));
     this.wasps.forEach((wasp) => (wasp.userData.orbit.speed *= 1.05));
+    this.ducks.forEach((duck) => (duck.userData.orbit.speed *= 1.05));
 
     // Actualizamos el callback de hiveSpeedMultiplier (re-sobrescribe con el nuevo level)
     this.threeScene.setHiveSpeedMultiplier(() => 1 + this.hiveLevel * 0.05);
@@ -173,6 +196,7 @@ export class GameManager {
     this.resourceBar.refresh(
       this.bees.length,
       this.wasps.length,
+      this.ducks.length,
       this.pollen,
       this.nectar,
       speedPercent
@@ -190,6 +214,12 @@ export class GameManager {
     const canBuyWasp = this.pollen >= waspCost;
     const waspCard = this.upgradeCards.find((c) => c.upgradeType === "avispa");
     waspCard.refresh(waspCost, this.wasps.length, canBuyWasp);
+
+    //    - duck:
+    const duckCost = this._calcDuckCost();
+    const canBuyDuck = this.pollen >= duckCost;
+    const duckCard = this.upgradeCards.find((c) => c.upgradeType === "pato");
+    duckCard.refresh(duckCost, this.ducks.length, canBuyDuck);
 
     //    - producción:
     const prodCost = this._calcProdCost();
@@ -234,6 +264,10 @@ export class GameManager {
     this.wasps.forEach((wasp) =>
       this.threeScene._moveInOrbit(wasp, delta, hiveCenter)
     );
+
+    this.ducks.forEach((duck, i) => {
+      this.threeScene._moveInOrbit(duck, delta, hiveCenter)
+    });
 
     // 5) Finalmente, actualizamos UI para reflejar cambios
     this._updateAllUI();

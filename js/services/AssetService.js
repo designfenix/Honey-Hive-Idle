@@ -23,6 +23,8 @@ export class AssetService {
       "assets/model/minecraft_bee.glb",
     WASP_GLTF:
       "assets/model/wasp.glb",
+    DUCK_GLTF:
+      "assets/model/grouse.glb",
     HDR_URL:
       "assets/hdr/minedump_flats_1k.hdr",
     MUSIC_URL:
@@ -172,6 +174,7 @@ export class AssetService {
       this._loadGLTF(urls.HIVE_GLTF, "hiveGLTF"),
       this._loadGLTF(urls.BEE_GLTF, "beeGLTF"),
       this._loadGLTF(urls.WASP_GLTF, "waspGLTF"),
+      this._loadGLTF(urls.DUCK_GLTF, "duckGLTF"),
       this._loadHDR(urls.HDR_URL),
       this._loadAudioBuffer(urls.MUSIC_URL, "musicBuffer"),
       this._loadGrassTexture(urls.GRASS_TEXTURE),
@@ -179,9 +182,6 @@ export class AssetService {
       this._loadAudioBuffer(urls.BEE_SFX, "soundBeeBuffer"),
       this._loadAudioBuffer(urls.WASP_SFX, "soundWaspBuffer"),
     ]).then(() => {
-      // Al terminar la carga, podemos deshacernos de loaders pesados si hace falta:
-      // this.hdrLoader.dispose();
-      // this.gltfLoader.dispose();
       return this.assets;
     });
   }
