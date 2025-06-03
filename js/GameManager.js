@@ -19,11 +19,14 @@ export class GameManager {
    * @param {Array<UpgradeCard>} upgradeCards - lista de instancias UpgradeCard (una por cada tarjeta).
    * @param {SoundToggle} soundToggle - instancia de SoundToggle (para reproducir música/SFX).
    */
-  constructor(threeScene, resourceBar, upgradeCards, soundToggle) {
+  constructor(threeScene, resourceBar, upgradeContainer, templates, soundToggle) {
     this.threeScene = threeScene;
     this.resourceBar = resourceBar;
-    this.upgradeCards = upgradeCards;
+    this.upgradeContainer = upgradeContainer;
+    this.cardTemplates = templates;
     this.soundToggle = soundToggle;
+    this.upgradeCards = [];
+    this.upgradeOrder = ["contratar", "avispa", "produccion", "mejorar-colmena", "pato"];
 
     // personajes del juego
     this.bees = [];
@@ -64,33 +67,44 @@ export class GameManager {
     // Equivalente a: 1 + this.hiveLevel * 0.05
     this.threeScene.setHiveSpeedMultiplier(() => 1 + this.hiveLevel * 0.05);
 
-    // Vinculamos eventos de compra en cada UpgradeCard
-    this.upgradeCards.forEach((card) => {
-      card.onClickCallback = (upgradeType) => {
-        switch (upgradeType) {
-          case "contratar":
-            this._buyBee();
-            break;
-          case "avispa":
-            this._buyWasp();
-            break;
-          case "pato":
-            this._buyDuck();
-            break;
-          case "produccion":
-            this._buyProd();
-            break;
-          case "mejorar-colmena":
-            this._buyHive();
-            break;
-          default:
-            console.warn(`Upgrade desconocido: ${upgradeType}`);
-        }
-      };
-    });
+    // Creamos primeras tarjetas (bee desbloqueada + wasp bloqueada)
+    this._createCard("contratar");
+    const wasp = this._createCard("avispa");
+    wasp.setLocked(true, `Nivel ${this.cardLevelReq["avispa"]}`);
+    this._updateCardLocks();
 
     this._updateCardLocks();
 
+  }
+
+  _createCard(type) {
+    const tpl = this.cardTemplates[type];
+    if (!tpl) return null;
+    const element = tpl.content.firstElementChild.cloneNode(true);
+    this.upgradeContainer.appendChild(element);
+    const card = new UpgradeCard(element, (upgradeType) => {
+      switch (upgradeType) {
+        case "contratar":
+          this._buyBee();
+          break;
+        case "avispa":
+          this._buyWasp();
+          break;
+        case "pato":
+          this._buyDuck();
+          break;
+        case "produccion":
+          this._buyProd();
+          break;
+        case "mejorar-colmena":
+          this._buyHive();
+          break;
+        default:
+          console.warn(`Upgrade desconocido: ${upgradeType}`);
+      }
+    });
+    this.upgradeCards.push(card);
+    return card;
   }
 
   // -------------------------------------------------
@@ -139,6 +153,25 @@ export class GameManager {
         this.threeScene.lightCone.triggerAnimation();
       }
       this._updateCardLocks();
+    }
+  }
+
+  _updateCardLocks() {
+    this.upgradeCards.forEach((card) => {
+      const req = this.cardLevelReq[card.upgradeType] ?? 1;
+      card.setLocked(this.userLevel < req, `Nivel ${req}`);
+    });
+
+    // Mostrar siguiente tarjeta si la última está desbloqueada
+    const lastCard = this.upgradeCards[this.upgradeCards.length - 1];
+    const lastIndex = this.upgradeOrder.indexOf(lastCard.upgradeType);
+    if (!lastCard.isLocked && lastIndex < this.upgradeOrder.length - 1) {
+      const nextType = this.upgradeOrder[lastIndex + 1];
+      if (!this.upgradeCards.find((c) => c.upgradeType === nextType)) {
+        const newCard = this._createCard(nextType);
+        const req = this.cardLevelReq[nextType] ?? 1;
+        newCard.setLocked(this.userLevel < req, `Nivel ${req}`);
+      }
     }
   }
 
@@ -248,25 +281,25 @@ export class GameManager {
     const beeCost = this._calcBeeCost();
     const canBuyBee = this.pollen >= beeCost;
     const beeCard = this.upgradeCards.find((c) => c.upgradeType === "contratar");
-    beeCard.refresh(beeCost, this.bees.length, canBuyBee);
+    if (beeCard) beeCard.refresh(beeCost, this.bees.length, canBuyBee);
 
     //    - avispa:
     const waspCost = this._calcWaspCost();
     const canBuyWasp = this.pollen >= waspCost;
     const waspCard = this.upgradeCards.find((c) => c.upgradeType === "avispa");
-    waspCard.refresh(waspCost, this.wasps.length, canBuyWasp);
+    if (waspCard) waspCard.refresh(waspCost, this.wasps.length, canBuyWasp);
 
     //    - duck:
     const duckCost = this._calcDuckCost();
     const canBuyDuck = this.pollen >= duckCost;
     const duckCard = this.upgradeCards.find((c) => c.upgradeType === "pato");
-    duckCard.refresh(duckCost, this.ducks.length, canBuyDuck);
+    if (duckCard) duckCard.refresh(duckCost, this.ducks.length, canBuyDuck);
 
     //    - producción:
     const prodCost = this._calcProdCost();
     const canBuyProd = this.nectar >= prodCost;
     const prodCard = this.upgradeCards.find((c) => c.upgradeType === "produccion");
-    prodCard.refresh(prodCost, this.prodLevel * 10, canBuyProd);
+    if (prodCard) prodCard.refresh(prodCost, this.prodLevel * 10, canBuyProd);
 
     //    - colmena:
     const hiveCost = this._calcHiveCost();
@@ -274,7 +307,7 @@ export class GameManager {
     const hiveCard = this.upgradeCards.find(
       (c) => c.upgradeType === "mejorar-colmena"
     );
-    hiveCard.refresh(hiveCost, this.hiveLevel * 5, canBuyHive);
+    if (hiveCard) hiveCard.refresh(hiveCost, this.hiveLevel * 5, canBuyHive);
   }
 
   // -------------------------------------------------
