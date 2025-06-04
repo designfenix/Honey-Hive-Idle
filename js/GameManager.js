@@ -87,7 +87,7 @@ export class GameManager {
     }
     this._updateCardLocks();
 
-    this._startAutoSave();
+    this._saveTimer = null;
   }
 
   _createCard(type) {
@@ -440,7 +440,15 @@ export class GameManager {
     }
   }
 
-  _startAutoSave() {
-    setInterval(() => this.saveToStorage(), this.saveInterval);
+  startAutoSave() {
+    if (this._saveTimer) return;
+    this._saveTimer = setInterval(() => this.saveToStorage(), this.saveInterval);
+  }
+
+  stopAutoSave() {
+    if (this._saveTimer) {
+      clearInterval(this._saveTimer);
+      this._saveTimer = null;
+    }
   }
 }

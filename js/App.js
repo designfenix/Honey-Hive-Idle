@@ -106,6 +106,19 @@ class App {
 
     // Ejecutamos animación de “playGame” (mover cámara)
     this.threeScene.playGameAnimation();
+    this.gameManager.startAutoSave();
+  }
+
+  _onNewGame() {
+    this._startGame();
+  }
+
+  _onContinue() {
+    const data = localStorage.getItem("honeyHiveSave");
+    if (data) {
+      this.gameManager.loadState(JSON.parse(data));
+    }
+    this._startGame();
   }
 
   _onNewGame() {
