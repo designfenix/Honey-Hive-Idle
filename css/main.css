@@ -214,6 +214,9 @@ button:hover {
   transition: background 0.2s, transform 0.1s;
   cursor: pointer;
 }
+.intro-button + .intro-button {
+  margin-top: 1rem;
+}
 .intro-button:hover {
   background: var(--accent-hover);
   transform: translateY(-2px);

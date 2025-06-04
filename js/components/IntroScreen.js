@@ -9,17 +9,31 @@ import { getElement } from "../utils/domHelper.js";
  * - Provee un método para animar la salida de esta intro (fade-out).
  */
 export class IntroScreen {
-  constructor(onPlayCallback) {
+  constructor(onNewGame, onContinue, hasSave = false) {
     this.container = getElement(".intro-screen");
-    this.playButton = getElement("#btn-play");
-    this.onPlayCallback = onPlayCallback;
+    this.newGameButton = getElement("#btn-new-game");
+    this.continueButton = getElement("#btn-continue");
+    this.onNewGame = onNewGame;
+    this.onContinue = onContinue;
 
-    // Al hacer click en “JUGAR”, llamamos al callback
-    this.playButton.addEventListener("click", () => {
-      if (typeof this.onPlayCallback === "function") {
-        this.onPlayCallback();
+    if (this.continueButton) {
+      this.continueButton.disabled = !hasSave;
+    }
+
+    // Al hacer click en “NEW GAME”, llamamos al callback
+    this.newGameButton.addEventListener("click", () => {
+      if (typeof this.onNewGame === "function") {
+        this.onNewGame();
       }
     });
+
+    if (this.continueButton) {
+      this.continueButton.addEventListener("click", () => {
+        if (!this.continueButton.disabled && typeof this.onContinue === "function") {
+          this.onContinue();
+        }
+      });
+    }
   }
 
   /**
@@ -56,11 +70,18 @@ export class IntroScreen {
       { opacity: 0, y: 100, scale: 0.5 },
       { opacity: 1, scale: 1, y: 0, duration: 2, delay: 1 }
     );
-    // Luego hacemos que el botón aparezca
+    // Luego hacemos que los botones aparezcan
     gsap.fromTo(
-      this.playButton,
+      this.newGameButton,
       { opacity: 0, scale: 0.5 },
       { opacity: 1, scale: 1, duration: 1, delay: 2 }
     );
+    if (this.continueButton) {
+      gsap.fromTo(
+        this.continueButton,
+        { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 1, delay: 2.2 }
+      );
+    }
   }
 }
