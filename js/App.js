@@ -41,8 +41,13 @@ class App {
         return this.loadingScreen.hide().then(() => assets);
       })
       .then((assets) => {
+        const hasSave = !!localStorage.getItem("honeyHiveSave");
         // 2) mostramos el IntroScreen
-        this.introScreen = new IntroScreen(() => this._onPlay());
+        this.introScreen = new IntroScreen(
+          () => this._onNewGame(),
+          () => this._onContinue(),
+          hasSave
+        );
         this.introScreen.show();
 
         // 3) Guardamos los assets
@@ -69,7 +74,8 @@ class App {
           this.resourceBar,
           this.upgradeContainer,
           upgradeConfig,
-          this.soundToggle
+          this.soundToggle,
+          { saveInterval: 30000 }
         );
 
         // 9) Ahora que GameManager está listo, iniciamos el bucle de render
@@ -80,12 +86,7 @@ class App {
       });
   }
 
-  /**
-   * Callback invocado cuando el usuario hace click en “JUGAR” dentro de IntroScreen.
-   * Aquí creamos ThreeScene, UI components (ResourceBar, UpgradeCards, SoundToggle) y GameManager.
-   * Finalmente, arrancamos el bucle de render.
-   */
-  _onPlay() {
+  _startGame() {
     // 4) Ocultamos la intro y simultáneamente mostramos upgrade-bar y header
     this.introScreen.hide();
 
@@ -105,6 +106,19 @@ class App {
 
     // Ejecutamos animación de “playGame” (mover cámara)
     this.threeScene.playGameAnimation();
+    this.gameManager.startAutoSave();
+  }
+
+  _onNewGame() {
+    this._startGame();
+  }
+
+  _onContinue() {
+    const data = localStorage.getItem("honeyHiveSave");
+    if (data) {
+      this.gameManager.loadState(JSON.parse(data));
+    }
+    this._startGame();
   }
 }
 

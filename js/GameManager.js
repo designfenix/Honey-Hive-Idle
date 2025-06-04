@@ -4,6 +4,8 @@ import * as THREE from "https://esm.sh/three@0.174.0";
 import { ResourceBar } from "./components/ResourceBar.js";
 import { UpgradeCard } from "./components/UpgradeCard.js";
 
+const STORAGE_KEY = "honeyHiveSave";
+
 /**
  * GameManager se encarga de:
  * - Mantener el estado del juego (bees, wasps, nectar, pollen, niveles).
@@ -19,7 +21,14 @@ export class GameManager {
    * @param {Array<UpgradeCard>} upgradeCards - lista de instancias UpgradeCard (una por cada tarjeta).
    * @param {SoundToggle} soundToggle - instancia de SoundToggle (para reproducir música/SFX).
    */
-  constructor(threeScene, resourceBar, upgradeContainer, upgradeDefs, soundToggle) {
+  constructor(
+    threeScene,
+    resourceBar,
+    upgradeContainer,
+    upgradeDefs,
+    soundToggle,
+    options = {}
+  ) {
     this.threeScene = threeScene;
     this.resourceBar = resourceBar;
     this.upgradeContainer = upgradeContainer;
@@ -31,6 +40,8 @@ export class GameManager {
     });
     this.soundToggle = soundToggle;
     this.upgradeCards = [];
+
+    this.saveInterval = options.saveInterval || 30000;
 
     // personajes del juego
     this.bees = [];
@@ -76,6 +87,7 @@ export class GameManager {
     }
     this._updateCardLocks();
 
+    this._saveTimer = null;
   }
 
   _createCard(type) {
@@ -370,5 +382,73 @@ export class GameManager {
 
     // 6) Finalmente, actualizamos UI para reflejar cambios
     this._updateAllUI();
+  }
+
+  getState() {
+    return {
+      bees: this.bees.length,
+      wasps: this.wasps.length,
+      ducks: this.ducks.length,
+      nectar: this.nectar,
+      pollen: this.pollen,
+      pollenLifetime: this.pollenLifetime,
+      levelStartPollen: this.levelStartPollen,
+      prodLevel: this.prodLevel,
+      hiveLevel: this.hiveLevel,
+      userLevel: this.userLevel,
+    };
+  }
+
+  loadState(state) {
+    if (!state) return;
+    this.nectar = state.nectar || 0;
+    this.pollen = state.pollen || 0;
+    this.pollenLifetime = state.pollenLifetime || 0;
+    this.levelStartPollen = state.levelStartPollen || 0;
+    this.prodLevel = state.prodLevel || 0;
+    this.hiveLevel = state.hiveLevel || 0;
+    this.userLevel = state.userLevel || 1;
+
+    this.threeScene.setHiveSpeedMultiplier(() => 1 + this.hiveLevel * 0.05);
+
+    const spawn = (count, fn) => {
+      for (let i = 0; i < count; i++) {
+        const ent = fn.call(this.threeScene);
+        if (fn === this.threeScene.spawnBee) this.bees.push(ent);
+        else if (fn === this.threeScene.spawnWasp) this.wasps.push(ent);
+        else if (fn === this.threeScene.spawnDuck) this.ducks.push(ent);
+      }
+    };
+    spawn(state.bees || 0, this.threeScene.spawnBee);
+    spawn(state.wasps || 0, this.threeScene.spawnWasp);
+    spawn(state.ducks || 0, this.threeScene.spawnDuck);
+
+    let prev;
+    do {
+      prev = this.upgradeCards.length;
+      this._updateCardLocks();
+    } while (this.upgradeCards.length > prev);
+
+    this._updateAllUI();
+  }
+
+  saveToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.getState()));
+    } catch (e) {
+      console.warn("Failed to save game", e);
+    }
+  }
+
+  startAutoSave() {
+    if (this._saveTimer) return;
+    this._saveTimer = setInterval(() => this.saveToStorage(), this.saveInterval);
+  }
+
+  stopAutoSave() {
+    if (this._saveTimer) {
+      clearInterval(this._saveTimer);
+      this._saveTimer = null;
+    }
   }
 }
