@@ -177,7 +177,7 @@ export class GameManager {
   }
 
   _levelRequirement(level) {
-    return Math.floor(3000 * Math.pow(level, 1.7));
+    return Math.floor(3000 * Math.pow(level, 1.3));
   }
 
   _checkLevelUp() {
