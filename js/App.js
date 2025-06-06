@@ -5,6 +5,7 @@ import { LoadingScreen } from "./components/LoadingScreen.js";
 import { IntroScreen } from "./components/IntroScreen.js";
 import { ResourceBar } from "./components/ResourceBar.js";
 import { SoundToggle } from "./components/SoundToggle.js";
+import { SettingsMenu } from "./components/SettingsMenu.js";
 import { ThreeScene } from "./three/ThreeScene.js";
 import { GameManager } from "./GameManager.js";
 import { getElement } from "./utils/domHelper.js";
@@ -62,13 +63,16 @@ class App {
         // 5) Creamos ResourceBar (actualiza valores superiores)
         this.resourceBar = new ResourceBar();
 
-        // 6) Creamos SoundToggle (música)
-        this.soundToggle = new SoundToggle(this.threeScene.music);
+          // 6) Creamos SoundToggle (música)
+          this.soundToggle = new SoundToggle(this.threeScene.music);
+
+          // 6b) Configuración de ajustes
+          this.settingsMenu = new SettingsMenu(this.threeScene);
 
         // 7) Contenedor donde se generarán las tarjetas
         this.upgradeContainer = getElement(".upgrade-bar .content-scroll");
 
-        // 8) Instanciamos GameManager inyectando dependencias
+          // 8) Instanciamos GameManager inyectando dependencias
         this.gameManager = new GameManager(
           this.threeScene,
           this.resourceBar,
@@ -107,18 +111,6 @@ class App {
     // Ejecutamos animación de “playGame” (mover cámara)
     this.threeScene.playGameAnimation();
     this.gameManager.startAutoSave();
-  }
-
-  _onNewGame() {
-    this._startGame();
-  }
-
-  _onContinue() {
-    const data = localStorage.getItem("honeyHiveSave");
-    if (data) {
-      this.gameManager.loadState(JSON.parse(data));
-    }
-    this._startGame();
   }
 
   _onNewGame() {

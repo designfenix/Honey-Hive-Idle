@@ -98,11 +98,13 @@ export class ThreeScene {
       antialias: true,
       alpha: true,
     });
+    this.pixelRatio = 1;
     this.renderer.setSize(
       this.containerEl.clientWidth,
       this.containerEl.clientHeight,
       false
     );
+    this.renderer.setPixelRatio(this.pixelRatio);
     this.renderer.shadowMap.enabled = true;
     this.renderer.physicallyCorrectLights = true;
   }
@@ -188,6 +190,27 @@ export class ThreeScene {
     if (this.music && !this.music.isPlaying) {
       this.music.play();
     }
+  }
+
+  setMusicVolume(value) {
+    if (this.music) this.music.setVolume(value);
+  }
+
+  setSFXVolume(value) {
+    [this.plopSound, this.beeSound, this.waspSound].forEach((s) => {
+      if (s) s.setVolume(value);
+    });
+  }
+
+  setQuality(level) {
+    if (level === "low") {
+      this.pixelRatio = 0.5;
+      this.renderer.shadowMap.enabled = false;
+    } else {
+      this.pixelRatio = 1;
+      this.renderer.shadowMap.enabled = true;
+    }
+    this.renderer.setPixelRatio(this.pixelRatio);
   }
 
   // -----------------------------------
