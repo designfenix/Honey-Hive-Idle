@@ -13,6 +13,7 @@ import { getElement } from "./utils/domHelper.js";
 import { UpgradeToggle } from "./components/UpgradeToggle.js";
 import { upgradeConfig } from "./config/upgrades.js";
 import { achievements } from "./config/achievements.js";
+import { WaspMiniGame } from "./minigames/WaspMiniGame.js";
 import gsap from "https://esm.sh/gsap";
 /**
  * Clase principal que orquesta el flujo completo:
@@ -69,9 +70,12 @@ class App {
         this.soundToggle = new SoundToggle(this.threeScene.music);
 
           // 6b) Configuración de ajustes
-          this.settingsMenu = new SettingsMenu(this.threeScene);
-          // 6c) Menú de logros
-          this.achievementsMenu = new AchievementsMenu(achievements);
+        this.settingsMenu = new SettingsMenu(this.threeScene);
+        // 6c) Menú de logros
+        this.achievementsMenu = new AchievementsMenu(achievements);
+        this.waspMiniGame = new WaspMiniGame((score) =>
+          this.gameManager.endMiniGame(score)
+        );
 
         // 7) Contenedor donde se generarán las tarjetas
         this.upgradeContainer = getElement(".upgrade-bar .content-scroll");
@@ -84,6 +88,7 @@ class App {
           upgradeConfig,
           this.soundToggle,
           this.achievementsMenu,
+          this.waspMiniGame,
           { saveInterval: 30000 }
         );
 

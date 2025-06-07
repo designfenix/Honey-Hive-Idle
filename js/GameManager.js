@@ -28,6 +28,7 @@ export class GameManager {
     upgradeDefs,
     soundToggle,
     achievementsMenu = null,
+    miniGame = null,
     options = {}
   ) {
     this.threeScene = threeScene;
@@ -41,6 +42,7 @@ export class GameManager {
     });
     this.soundToggle = soundToggle;
     this.achievementsMenu = achievementsMenu;
+    this.miniGame = miniGame;
     this.upgradeCards = [];
 
     this.saveInterval = options.saveInterval || 30000;
@@ -90,6 +92,12 @@ export class GameManager {
     this._updateCardLocks();
 
     this._saveTimer = null;
+
+    // Configuración de eventos aleatorios y minijuego
+    this.randomEventInterval = options.randomEventInterval || 60;
+    this._nextEventTime = this.randomEventInterval;
+    this._elapsed = 0;
+    this.isInEvent = false;
   }
 
   _createCard(type) {
@@ -290,6 +298,29 @@ export class GameManager {
   }
 
   // -------------------------------------------------
+  // Evento de minijuego "Despeja las avispas"
+  // -------------------------------------------------
+  _triggerWaspEvent() {
+    if (!this.miniGame) return;
+    this.isInEvent = true;
+    if (this.threeScene.moveToMiniGame)
+      this.threeScene.moveToMiniGame();
+    this.miniGame.start();
+  }
+
+  endMiniGame(score) {
+    const reward = score * 5;
+    this.pollen += reward;
+    if (this.threeScene.returnFromMiniGame)
+      this.threeScene.returnFromMiniGame();
+    this.isInEvent = false;
+    this._elapsed = 0;
+    this._nextEventTime = this.randomEventInterval +
+      Math.random() * this.randomEventInterval;
+    this._updateAllUI();
+  }
+
+  // -------------------------------------------------
   // Actualiza UI global (ResourceBar + todas las UpgradeCards)
   // -------------------------------------------------
   _updateAllUI() {
@@ -348,6 +379,16 @@ export class GameManager {
   // Producción de recursos cada frame (llamado por ThreeScene)
   // -------------------------------------------------
   productionLoop(delta) {
+    if (!this.isInEvent) {
+      this._elapsed += delta;
+      if (this._elapsed >= this._nextEventTime) {
+        this._triggerWaspEvent();
+        return;
+      }
+    } else {
+      return;
+    }
+
     // 1) Guardamos el valor inicial para calcular polen generado en este ciclo
     const pollenBefore = this.pollen;
 
