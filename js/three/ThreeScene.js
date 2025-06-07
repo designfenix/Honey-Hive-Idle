@@ -876,6 +876,37 @@ _moveInOrbit(entity, delta, hiveCenter) {
     });
   }
 
+  // Animar cámara hacia la zona del minijuego
+  moveToMiniGame() {
+    gsap.to(this.camera.position, {
+      x: -4,
+      y: 1.5,
+      z: 0,
+      ease: "power2.out",
+      duration: 4,
+    });
+    gsap.to(this.camera.rotation, {
+      x: 0,
+      y: -Math.PI / 2,
+      z: 0,
+      ease: "power2.out",
+      duration: 4,
+    });
+    gsap.to(this.camera, {
+      zoom: 1.4,
+      ease: "power2.out",
+      duration: 4,
+      onUpdate: () => this.camera.updateProjectionMatrix(),
+      onComplete: () => {
+        this.controls.maxDistance = 5;
+      },
+    });
+  }
+
+  returnFromMiniGame() {
+    this.playGameAnimation();
+  }
+
   // -----------------------------------
   // 21. Ajustar tamaño al cambiar ventana
   // -----------------------------------

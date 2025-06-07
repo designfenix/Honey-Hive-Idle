@@ -618,6 +618,44 @@ button:hover {
   color: #222;
 }
 
+/* ----------------- COMPONENTE: Minigame ----------------- */
+.minigame-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.minigame-overlay.active {
+  display: flex;
+}
+.minigame-area {
+  position: relative;
+  width: 80vw;
+  height: 60vh;
+  background: var(--dark-panel);
+  border-radius: 12px;
+  overflow: hidden;
+  color: var(--text-white);
+}
+.minigame-info {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 0.8rem;
+}
+.wasp-target {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/images/icon-wasp.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
 .achievement-toast {
   position: fixed;
   bottom: 10px;
