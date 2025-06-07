@@ -1,0 +1,81 @@
+/* ----------------- COMPONENTE: Achievements Menu ----------------- */
+.achievements-button {
+  position: fixed;
+  top: 8px;
+  left: 50px;
+  z-index: 100;
+  background: var(--accent);
+  border: none;
+  color: #222;
+  font-size: 1rem;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.achievements-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  &.open {
+    display: flex;
+  }
+  .achievements-content {
+    background: var(--dark-panel);
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--text-white);
+    min-width: 220px;
+  }
+  .achievement-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    li {
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #444;
+      &.unlocked {
+        color: var(--accent);
+      }
+      .desc {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-light);
+      }
+    }
+  }
+  .close-btn {
+    align-self: flex-end;
+    padding: 4px 8px;
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    color: #222;
+  }
+}
+
+.achievement-toast {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  background: var(--dark-panel);
+  color: var(--text-white);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 300;
+  &.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}

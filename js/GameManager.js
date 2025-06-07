@@ -27,6 +27,7 @@ export class GameManager {
     upgradeContainer,
     upgradeDefs,
     soundToggle,
+    achievementsMenu = null,
     options = {}
   ) {
     this.threeScene = threeScene;
@@ -39,6 +40,7 @@ export class GameManager {
       this.upgradeOrder.push(cfg.type);
     });
     this.soundToggle = soundToggle;
+    this.achievementsMenu = achievementsMenu;
     this.upgradeCards = [];
 
     this.saveInterval = options.saveInterval || 30000;
@@ -336,6 +338,10 @@ export class GameManager {
       (c) => c.upgradeType === "mejorar-colmena"
     );
     if (hiveCard) hiveCard.refresh(hiveCost, this.hiveLevel * 5, canBuyHive);
+
+    if (this.achievementsMenu) {
+      this.achievementsMenu.check(this.getState());
+    }
   }
 
   // -------------------------------------------------

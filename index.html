@@ -84,6 +84,7 @@
         <canvas id="three-canvas"></canvas>
       </div>
       <button id="settings-button" class="settings-button">⚙</button>
+      <button id="achievements-button" class="achievements-button">🏆</button>
       <div class="settings-menu">
         <div class="settings-content">
           <h2>Settings</h2>
@@ -105,6 +106,13 @@
           <button id="settings-close" class="close-btn">Close</button>
         </div>
       </div>
+      <div class="achievements-menu">
+        <div class="achievements-content">
+          <h2>Achievements</h2>
+          <ul class="achievement-list"></ul>
+          <button id="achievements-close" class="close-btn">Close</button>
+        </div>
+      </div>
       <div class="upgrade-bar">
         <button class="upgrade-toggle" aria-expanded="false" aria-label="Show upgrades">
         </button>
@@ -122,6 +130,8 @@
   <script type="module" src="js/components/ResourceBar.js"></script>
   <script type="module" src="js/components/SoundToggle.js"></script>
   <script type="module" src="js/components/SettingsMenu.js"></script>
+  <script type="module" src="js/components/AchievementsMenu.js"></script>
+  <script type="module" src="js/config/achievements.js"></script>
   <script type="module" src="js/components/UpgradeCard.js"></script>
   <script type="module" src="js/config/upgrades.js"></script>
   <script type="module" src="js/components/UpgradeToggle.js"></script>

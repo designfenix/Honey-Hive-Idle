@@ -6,11 +6,13 @@ import { IntroScreen } from "./components/IntroScreen.js";
 import { ResourceBar } from "./components/ResourceBar.js";
 import { SoundToggle } from "./components/SoundToggle.js";
 import { SettingsMenu } from "./components/SettingsMenu.js";
+import { AchievementsMenu } from "./components/AchievementsMenu.js";
 import { ThreeScene } from "./three/ThreeScene.js";
 import { GameManager } from "./GameManager.js";
 import { getElement } from "./utils/domHelper.js";
 import { UpgradeToggle } from "./components/UpgradeToggle.js";
 import { upgradeConfig } from "./config/upgrades.js";
+import { achievements } from "./config/achievements.js";
 import gsap from "https://esm.sh/gsap";
 /**
  * Clase principal que orquesta el flujo completo:
@@ -64,10 +66,12 @@ class App {
         this.resourceBar = new ResourceBar();
 
           // 6) Creamos SoundToggle (música)
-          this.soundToggle = new SoundToggle(this.threeScene.music);
+        this.soundToggle = new SoundToggle(this.threeScene.music);
 
           // 6b) Configuración de ajustes
           this.settingsMenu = new SettingsMenu(this.threeScene);
+          // 6c) Menú de logros
+          this.achievementsMenu = new AchievementsMenu(achievements);
 
         // 7) Contenedor donde se generarán las tarjetas
         this.upgradeContainer = getElement(".upgrade-bar .content-scroll");
@@ -79,6 +83,7 @@ class App {
           this.upgradeContainer,
           upgradeConfig,
           this.soundToggle,
+          this.achievementsMenu,
           { saveInterval: 30000 }
         );
 

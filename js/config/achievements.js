@@ -1,0 +1,22 @@
+export const achievements = [
+  { id: 'bee-1', title: 'First Bee', description: 'Hire your first bee', type: 'bees', value: 1 },
+  { id: 'bee-20', title: 'Bee Fanatic', description: 'Reach 20 bees', type: 'bees', value: 20 },
+  { id: 'bee-50', title: 'Busy Hive', description: 'Reach 50 bees', type: 'bees', value: 50 },
+  { id: 'wasp-1', title: 'Wasp Wrangler', description: 'Hire your first wasp', type: 'wasps', value: 1 },
+  { id: 'wasp-5', title: 'Wasp Army', description: 'Hire 5 wasps', type: 'wasps', value: 5 },
+  { id: 'duck-1', title: 'Duck Tamer', description: 'Hire your first duck', type: 'ducks', value: 1 },
+  { id: 'duck-3', title: 'Duck Squad', description: 'Hire 3 ducks', type: 'ducks', value: 3 },
+  { id: 'prod-1', title: 'First Upgrade', description: 'Buy a production upgrade', type: 'prodLevel', value: 1 },
+  { id: 'prod-5', title: 'Efficient Worker', description: 'Reach production level 5', type: 'prodLevel', value: 5 },
+  { id: 'hive-1', title: 'Hive Builder', description: 'Upgrade your hive', type: 'hiveLevel', value: 1 },
+  { id: 'hive-5', title: 'Master Hive', description: 'Reach hive level 5', type: 'hiveLevel', value: 5 },
+  { id: 'level-2', title: 'First Level Up', description: 'Reach user level 2', type: 'userLevel', value: 2 },
+  { id: 'level-5', title: 'Experienced Player', description: 'Reach user level 5', type: 'userLevel', value: 5 },
+  { id: 'level-10', title: 'Pro Gamer', description: 'Reach user level 10', type: 'userLevel', value: 10 },
+  { id: 'pollen-100', title: 'Apprentice Harvester', description: 'Accumulate 100 pollen', type: 'pollen', value: 100 },
+  { id: 'pollenlife-1000', title: 'Pollen Hoarder', description: 'Collect 1,000 total pollen', type: 'pollenLifetime', value: 1000 },
+  { id: 'pollenlife-50000', title: 'Pollen Tycoon', description: 'Collect 50,000 total pollen', type: 'pollenLifetime', value: 50000 },
+  { id: 'pollenlife-1000000', title: 'Millionaire', description: 'Collect 1,000,000 total pollen', type: 'pollenLifetime', value: 1000000 },
+  { id: 'nectar-1000', title: 'Sweet Nectar', description: 'Collect 1,000 nectar', type: 'nectar', value: 1000 },
+  { id: 'nectar-5000', title: 'Nectar Overflow', description: 'Collect 5,000 nectar', type: 'nectar', value: 5000 }
+];
