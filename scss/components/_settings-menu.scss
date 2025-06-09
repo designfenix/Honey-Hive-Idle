@@ -4,12 +4,16 @@
   top: 8px;
   left: 8px;
   z-index: 100;
-  background: var(--accent);
+  background: url(../../assets/images/icon-setting.png) no-repeat center center transparent;
+  background-size: contain;
+  width: 32px;
+  height: 32px;
   border: none;
-  color: #222;
-  font-size: 1rem;
-  padding: 6px 8px;
-  border-radius: 8px;
+  display: block;
+  transition: ease all 0.3s;
+  &:hover{
+    filter: brightness(0.8);
+  }
 }
 .settings-menu {
   position: fixed;
@@ -24,13 +28,17 @@
   }
   .settings-content {
     background: var(--dark-panel);
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     color: var(--text-white);
     min-width: 220px;
+    h2{
+      font-size: 1.2rem;
+      padding-bottom: 0.5rem;;
+    }
     label {
       display: flex;
       flex-direction: column;
