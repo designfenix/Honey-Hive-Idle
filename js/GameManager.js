@@ -66,6 +66,7 @@ export class GameManager {
     this.baseWaspCost = 100;
     this.waspCostRate = 2;
     this.waspPollenPerSec = 0.5;
+    this.duckPollenPerSec = 2;
 
     this.baseRates = {
       nectarPerBee: 1,
@@ -365,13 +366,16 @@ export class GameManager {
     // 4) Polén extra por avispas
     this.pollen += this.wasps.length * this.waspPollenPerSec * delta;
 
+    // 5) Polén extra por patos
+    this.pollen += this.ducks.length * this.duckPollenPerSec * delta;
+
     // Cantidad total generada en este ciclo (solo suma si es positiva)
     const produced = this.pollen - pollenBefore;
     if (produced > 0) {
       this.pollenLifetime += produced;
     }
 
-    // 5) Movimiento en órbita (el propio ThreeScene itera internamente bees y wasps)
+    // 6) Movimiento en órbita (el propio ThreeScene itera internamente bees, wasps y patos)
     const hiveCenter = new THREE.Vector3().setFromMatrixPosition(
       this.threeScene.hive.matrixWorld
     );
@@ -386,7 +390,7 @@ export class GameManager {
     });
     this._checkLevelUp();
 
-    // 6) Finalmente, actualizamos UI para reflejar cambios
+    // 7) Finalmente, actualizamos UI para reflejar cambios
     this._updateAllUI();
   }
 
