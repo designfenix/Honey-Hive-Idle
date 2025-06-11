@@ -53,5 +53,16 @@ export const upgradeConfig = [
     costResource: 'pollen',
     showAmount: true,
     levelReq: 10
+  },
+  {
+    type: 'conejo',
+    order: 5,
+    icon: 'assets/images/icon-nectar.png',
+    costIcon: 'assets/images/icon-polen.png',
+    name: 'Hire Rabbit',
+    description: 'Generates 1 nectar/s',
+    costResource: 'pollen',
+    showAmount: true,
+    levelReq: 15
   }
 ];
