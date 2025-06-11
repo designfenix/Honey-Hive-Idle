@@ -721,6 +721,8 @@ spawnRabbit() {
     if (node.isMesh) node.castShadow = node.receiveShadow = true;
   });
   rabbit.scale.setScalar(0.5);
+  // Ajuste de orientación para que mire en la dirección correcta
+  rabbit.rotation.y = Math.PI;
 
   this.hive.updateMatrixWorld(true);
   const hiveCenter = new THREE.Vector3().setFromMatrixPosition(this.hive.matrixWorld);
@@ -770,6 +772,7 @@ spawnRabbit() {
       baseY: 0,
       speed: (0.25 + Math.random() * 0.2) * this._hiveSpeedMultiplier(),
     },
+    isRabbit: true,
   };
 
   this.scene.add(rabbit);
@@ -824,7 +827,8 @@ _moveInOrbit(entity, delta, hiveCenter) {
     toTarget.normalize();
     entity.position.addScaledVector(toTarget, ud.walk.speed * delta);
     const yaw = Math.atan2(toTarget.x, toTarget.z) + Math.PI;
-    entity.rotation.set(0, yaw, 0);
+    const extraRot = ud.isRabbit ? Math.PI : 0;
+    entity.rotation.set(0, yaw + extraRot, 0);
     return;
   }
 
@@ -873,7 +877,8 @@ _moveInOrbit(entity, delta, hiveCenter) {
     }
 
     // Rotamos hacia fuera de la órbita
-    entity.rotation.y = -a + Math.PI;
+    const extraRot = ud.isRabbit ? Math.PI : 0;
+    entity.rotation.y = -a + Math.PI + extraRot;
   }
 }
 
