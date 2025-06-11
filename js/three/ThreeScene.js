@@ -2,6 +2,7 @@
 
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { OrbitControls } from "https://esm.sh/three@0.174.0/examples/jsm/controls/OrbitControls.js";
+import { SkeletonUtils } from "https://esm.sh/three@0.174.0/examples/jsm/utils/SkeletonUtils.js";
 import { EffectComposer } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/RenderPass.js";
 import { BokehPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/BokehPass.js";
@@ -715,7 +716,7 @@ spawnDuck() {
  */
 spawnRabbit() {
   const gltf = this.assets.rabbitGLTF;
-  const rabbit = gltf.scene.clone();
+  const rabbit = SkeletonUtils.clone(gltf.scene);
   rabbit.traverse((node) => {
     if (node.isMesh) node.castShadow = node.receiveShadow = true;
   });
@@ -774,7 +775,8 @@ spawnRabbit() {
   this.scene.add(rabbit);
 
   if (gltf.animations && gltf.animations.length > 0 && this.rabbitMixer) {
-    this.rabbitMixer.clipAction(gltf.animations[0], rabbit).play();
+    // Index 2 = "Run" according to the GLTF file
+    this.rabbitMixer.clipAction(gltf.animations[2], rabbit).play();
   }
 
   return rabbit;
