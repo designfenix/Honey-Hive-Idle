@@ -274,8 +274,8 @@ export class GameManager {
     if (this.pollen < cost) return false;
     this.pollen -= cost;
 
-    // Sin representación 3D, simplemente aumentamos la colección
-    this.rabbits.push({});
+    const rabbitEntity = this.threeScene.spawnRabbit();
+    this.rabbits.push(rabbitEntity);
 
     this._updateAllUI();
     return true;
@@ -307,6 +307,7 @@ export class GameManager {
     this.bees.forEach((bee) => (bee.userData.orbit.speed *= 1.05));
     this.wasps.forEach((wasp) => (wasp.userData.orbit.speed *= 1.05));
     this.ducks.forEach((duck) => (duck.userData.orbit.speed *= 1.05));
+    this.rabbits.forEach((rabbit) => (rabbit.userData.orbit.speed *= 1.05));
 
     // Actualizamos el callback de hiveSpeedMultiplier (re-sobrescribe con el nuevo level)
     this.threeScene.setHiveSpeedMultiplier(() => 1 + this.hiveLevel * 0.05);
@@ -424,6 +425,9 @@ export class GameManager {
     this.ducks.forEach((duck, i) => {
       this.threeScene._moveInOrbit(duck, delta, hiveCenter)
     });
+    this.rabbits.forEach((rabbit) =>
+      this.threeScene._moveInOrbit(rabbit, delta, hiveCenter)
+    );
     this._checkLevelUp();
 
     // 7) Finalmente, actualizamos UI para reflejar cambios
@@ -464,12 +468,13 @@ export class GameManager {
         if (fn === this.threeScene.spawnBee) this.bees.push(ent);
         else if (fn === this.threeScene.spawnWasp) this.wasps.push(ent);
         else if (fn === this.threeScene.spawnDuck) this.ducks.push(ent);
+        else if (fn === this.threeScene.spawnRabbit) this.rabbits.push(ent);
       }
     };
     spawn(state.bees || 0, this.threeScene.spawnBee);
     spawn(state.wasps || 0, this.threeScene.spawnWasp);
     spawn(state.ducks || 0, this.threeScene.spawnDuck);
-    this.rabbits = new Array(state.rabbits || 0).fill({});
+    spawn(state.rabbits || 0, this.threeScene.spawnRabbit);
 
     let prev;
     do {

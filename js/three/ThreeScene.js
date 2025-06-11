@@ -66,6 +66,7 @@ export class ThreeScene {
     this._initHive();
     this._initBeesMixer();
     this._initDucksMixer();
+    this._initRabbitsMixer();
 
     this.lightCone = new LightConeEffect(
       this.scene,
@@ -479,6 +480,12 @@ export class ThreeScene {
     // No estamos reproduciendo ninguna animación hasta que se spawnee un pato
   }
 
+  _initRabbitsMixer() {
+    const gltf = this.assets.rabbitGLTF;
+    this.rabbitMixer = new THREE.AnimationMixer(this.scene);
+    // No estamos reproduciendo ninguna animación hasta que se spawnee un conejo
+  }
+
   // -----------------------------------
   // 14. Setter para hiveSpeedMultiplier (invocado desde GameManager)
   // -----------------------------------
@@ -703,6 +710,76 @@ spawnDuck() {
   return duck;
 }
 
+/**
+ * spawnRabbit(): igual que spawnDuck pero orbita más cerca de la colmena.
+ */
+spawnRabbit() {
+  const gltf = this.assets.rabbitGLTF;
+  const rabbit = gltf.scene.clone();
+  rabbit.traverse((node) => {
+    if (node.isMesh) node.castShadow = node.receiveShadow = true;
+  });
+  rabbit.scale.setScalar(0.5);
+
+  this.hive.updateMatrixWorld(true);
+  const hiveCenter = new THREE.Vector3().setFromMatrixPosition(this.hive.matrixWorld);
+
+  const rMin = 8;
+  const rMax = 16;
+  const angle0 = Math.random() * Math.PI * 2;
+  const radius0 = THREE.MathUtils.lerp(rMin, rMax, Math.random());
+
+  const offsetSpawn = new THREE.Vector3(
+    Math.cos(angle0) * radius0,
+    0,
+    Math.sin(angle0) * radius0
+  );
+  const spawnPos = new THREE.Vector3(
+    hiveCenter.x + offsetSpawn.x,
+    0,
+    hiveCenter.z + offsetSpawn.z
+  );
+  rabbit.position.copy(spawnPos);
+
+  const orbitRadius = 3;
+  const offsetOrbitStart = new THREE.Vector3(
+    Math.cos(angle0) * orbitRadius,
+    0,
+    Math.sin(angle0) * orbitRadius
+  );
+  const orbitStartPos = new THREE.Vector3(
+    hiveCenter.x + offsetOrbitStart.x,
+    0,
+    hiveCenter.z + offsetOrbitStart.z
+  );
+
+  const walkDir = new THREE.Vector3().subVectors(orbitStartPos, spawnPos).normalize();
+  const walkSpeed = 0.45 + Math.random() * 0.2;
+
+  rabbit.userData = {
+    phase: "walking",
+    walk: {
+      direction: walkDir,
+      target: orbitStartPos.clone(),
+      speed: walkSpeed,
+    },
+    orbit: {
+      angle: angle0,
+      radius: orbitRadius,
+      baseY: 0,
+      speed: (0.25 + Math.random() * 0.2) * this._hiveSpeedMultiplier(),
+    },
+  };
+
+  this.scene.add(rabbit);
+
+  if (gltf.animations && gltf.animations.length > 0 && this.rabbitMixer) {
+    this.rabbitMixer.clipAction(gltf.animations[0], rabbit).play();
+  }
+
+  return rabbit;
+}
+
 
 
   /**
@@ -810,6 +887,7 @@ _moveInOrbit(entity, delta, hiveCenter) {
       // Actualizar Mixer
       if (this.beeMixer) this.beeMixer.update(delta);
       if (this.duckMixer) this.duckMixer.update(delta);
+      if (this.rabbitMixer) this.rabbitMixer.update(delta);
 
       // Producción y movimiento externo desde GameManager
       if (typeof this.onBeforeRender === "function") {

@@ -25,6 +25,8 @@ export class AssetService {
       "assets/model/wasp.glb",
     DUCK_GLTF:
       "assets/model/grouse.glb",
+    RABBIT_GLTF:
+      "assets/model/rabbit.glb",
     HDR_URL:
       "assets/hdr/minedump_flats_1k.hdr",
     MUSIC_URL:
@@ -164,7 +166,7 @@ export class AssetService {
   /**
    * Inicia la carga de todos los assets y devuelve una promesa que resuelve cuando todos terminen.
    * Las claves en this.assets serán:
-   *   hiveGLTF, beeGLTF, waspGLTF, hdrEquirect,
+   *   hiveGLTF, beeGLTF, waspGLTF, duckGLTF, rabbitGLTF, hdrEquirect,
    *   musicBuffer, soundPlopBuffer, soundBeeBuffer, soundWaspBuffer,
    *   grassTexture
    */
@@ -175,6 +177,7 @@ export class AssetService {
       this._loadGLTF(urls.BEE_GLTF, "beeGLTF"),
       this._loadGLTF(urls.WASP_GLTF, "waspGLTF"),
       this._loadGLTF(urls.DUCK_GLTF, "duckGLTF"),
+      this._loadGLTF(urls.RABBIT_GLTF, "rabbitGLTF"),
       this._loadHDR(urls.HDR_URL),
       this._loadAudioBuffer(urls.MUSIC_URL, "musicBuffer"),
       this._loadGrassTexture(urls.GRASS_TEXTURE),
