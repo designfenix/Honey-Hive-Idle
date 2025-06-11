@@ -2,7 +2,7 @@
 
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { OrbitControls } from "https://esm.sh/three@0.174.0/examples/jsm/controls/OrbitControls.js";
-import { SkeletonUtils } from "https://esm.sh/three@0.174.0/examples/jsm/utils/SkeletonUtils.js";
+import * as SkeletonUtils from "https://esm.sh/three@0.174.0/examples/jsm/utils/SkeletonUtils.js";
 import { EffectComposer } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/RenderPass.js";
 import { BokehPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/BokehPass.js";
