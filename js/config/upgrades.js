@@ -19,7 +19,7 @@ export const upgradeConfig = [
     description: '+<span data-value></span>% / bee',
     costResource: 'nectar',
     showAmount: false,
-    levelReq: null
+    levelReq: 2
   },
   {
     type: 'avispa',
@@ -30,7 +30,7 @@ export const upgradeConfig = [
     description: 'Generates 1.5 pollen/s',
     costResource: 'pollen',
     showAmount: true,
-    levelReq: 2
+    levelReq: 4
   },
   {
     type: 'mejorar-colmena',
@@ -41,7 +41,7 @@ export const upgradeConfig = [
     description: '+<span data-value></span>% speed',
     costResource: 'nectar',
     showAmount: false,
-    levelReq: 7
+    levelReq: 8
   },
   {
     type: 'pato',
@@ -52,6 +52,6 @@ export const upgradeConfig = [
     description: 'Generates 2 pollen/s',
     costResource: 'pollen',
     showAmount: true,
-    levelReq: 10
+    levelReq: 12
   }
 ];

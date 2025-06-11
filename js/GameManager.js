@@ -153,8 +153,9 @@ export class GameManager {
   }
 
   _calcBeeCost() {
-    const n = this.bees.length;
-    return Math.ceil(this._baseBeeCost() * Math.pow(this.costRateBee, n));
+    const paidBees = Math.max(0, this.bees.length - this.initialFreeBees);
+    const baseCost = this.bees.length < this.initialFreeBees ? 0 : this.costBaseBee;
+    return Math.ceil(baseCost * Math.pow(this.costRateBee, paidBees));
   }
 
   _calcWaspCost() {
@@ -180,7 +181,7 @@ export class GameManager {
   }
 
   _levelRequirement(level) {
-    return Math.floor(3000 * Math.pow(level, 1.3));
+    return Math.floor(3000 * Math.pow(level, 1.25));
   }
 
   _checkLevelUp() {
