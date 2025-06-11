@@ -775,8 +775,12 @@ spawnRabbit() {
   this.scene.add(rabbit);
 
   if (gltf.animations && gltf.animations.length > 0 && this.rabbitMixer) {
-    // Index 2 = "Run" according to the GLTF file
-    this.rabbitMixer.clipAction(gltf.animations[2], rabbit).play();
+    const runClip = gltf.animations.find((c) =>
+      c.name.toLowerCase().includes("run")
+    );
+    if (runClip) {
+      this.rabbitMixer.clipAction(runClip, rabbit).play();
+    }
   }
 
   return rabbit;
