@@ -49,6 +49,7 @@ export class GameManager {
     this.bees = [];
     this.wasps = [];
     this.ducks = [];
+    this.rabbits = [];
     this.nectar = 0;
     this.pollen = 0;
     // Polén acumulado durante toda la partida (no se reduce al gastar)
@@ -67,6 +68,9 @@ export class GameManager {
     this.waspCostRate = 2;
     this.waspPollenPerSec = 0.5;
     this.duckPollenPerSec = 2;
+    this.baseRabbitCost = 200;
+    this.rabbitCostRate = 1.25;
+    this.rabbitNectarPerSec = 1;
 
     this.baseRates = {
       nectarPerBee: 1,
@@ -130,6 +134,9 @@ export class GameManager {
         case "pato":
           this._buyDuck();
           break;
+        case "conejo":
+          this._buyRabbit();
+          break;
         case "produccion":
           this._buyProd();
           break;
@@ -165,6 +172,11 @@ export class GameManager {
   _calcDuckCost() {
     const d = this.ducks.length;
     return Math.ceil(50 * Math.pow(1.2, d));
+  }
+
+  _calcRabbitCost() {
+    const r = this.rabbits.length;
+    return Math.ceil(this.baseRabbitCost * Math.pow(this.rabbitCostRate, r));
   }
 
   _calcProdCost() {
@@ -256,6 +268,18 @@ export class GameManager {
     return true;
   }
 
+  _buyRabbit() {
+    const cost = this._calcRabbitCost();
+    if (this.pollen < cost) return false;
+    this.pollen -= cost;
+
+    // Sin representación 3D, simplemente aumentamos la colección
+    this.rabbits.push({});
+
+    this._updateAllUI();
+    return true;
+  }
+
   _buyProd() {
     // Aquí, para mantener SFX igual al original: se reproduce plop antes
     this.threeScene.plopSound.stop();
@@ -326,6 +350,12 @@ export class GameManager {
     const duckCard = this.upgradeCards.find((c) => c.upgradeType === "pato");
     if (duckCard) duckCard.refresh(duckCost, this.ducks.length, canBuyDuck);
 
+    //    - conejo:
+    const rabbitCost = this._calcRabbitCost();
+    const canBuyRabbit = this.pollen >= rabbitCost;
+    const rabbitCard = this.upgradeCards.find((c) => c.upgradeType === "conejo");
+    if (rabbitCard) rabbitCard.refresh(rabbitCost, this.rabbits.length, canBuyRabbit);
+
     //    - producción:
     const prodCost = this._calcProdCost();
     const canBuyProd = this.nectar >= prodCost;
@@ -363,6 +393,11 @@ export class GameManager {
     this.nectar += nectarRate * delta;
     this.pollen += nectarRate * this.baseRates.pollenRatio * delta;
 
+    // 3b) Néctar extra por conejos
+    const rabbitNectar = this.rabbits.length * this.rabbitNectarPerSec;
+    this.nectar += rabbitNectar * delta;
+    this.pollen += rabbitNectar * this.baseRates.pollenRatio * delta;
+
     // 4) Polén extra por avispas
     this.pollen += this.wasps.length * this.waspPollenPerSec * delta;
 
@@ -399,6 +434,7 @@ export class GameManager {
       bees: this.bees.length,
       wasps: this.wasps.length,
       ducks: this.ducks.length,
+      rabbits: this.rabbits.length,
       nectar: this.nectar,
       pollen: this.pollen,
       pollenLifetime: this.pollenLifetime,
@@ -432,6 +468,7 @@ export class GameManager {
     spawn(state.bees || 0, this.threeScene.spawnBee);
     spawn(state.wasps || 0, this.threeScene.spawnWasp);
     spawn(state.ducks || 0, this.threeScene.spawnDuck);
+    this.rabbits = new Array(state.rabbits || 0).fill({});
 
     let prev;
     do {
