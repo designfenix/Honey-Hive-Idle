@@ -46,7 +46,7 @@ export const upgradeConfig = [
   {
     type: 'pato',
     order: 4,
-    icon: 'assets/images/icon-polen.png',
+    icon: 'assets/images/icon-duck.png',
     costIcon: 'assets/images/icon-polen.png',
     name: 'Hire Duck',
     description: 'Generates 2 pollen/s',
@@ -57,7 +57,7 @@ export const upgradeConfig = [
   {
     type: 'conejo',
     order: 5,
-    icon: 'assets/images/icon-nectar.png',
+    icon: 'assets/images/icon-rabbit.png',
     costIcon: 'assets/images/icon-polen.png',
     name: 'Hire Rabbit',
     description: 'Generates 1 nectar/s',

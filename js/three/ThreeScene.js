@@ -519,7 +519,7 @@ export class ThreeScene {
     const insidePos = insideOffset.clone().applyMatrix4(this.hive.matrixWorld);
 
     // Punto de salida a radio 1
-    const exitOffset = new THREE.Vector3(1, 0.05, 0);
+    const exitOffset = new THREE.Vector3(THREE.MathUtils.lerp(1, 1.5, Math.random()), 0.05, 0);
     const exitPos = exitOffset.clone().applyMatrix4(this.hive.matrixWorld);
 
     bee.position.copy(insidePos);
@@ -577,7 +577,7 @@ export class ThreeScene {
     const insidePos = insideOffset.clone().applyMatrix4(this.hive.matrixWorld);
 
     // Punto de salida a radio 2.5
-    const exitOffset = new THREE.Vector3(2.5, 0.05, 0);
+    const exitOffset = new THREE.Vector3(THREE.MathUtils.lerp(2, 2.5, Math.random()), 0.05, 0);
     const exitPos = exitOffset.clone().applyMatrix4(this.hive.matrixWorld);
 
     wasp.position.copy(insidePos);
@@ -666,7 +666,7 @@ spawnDuck() {
   // ───────────────────────────────────────────────────────
   // 3) Calcular punto “orbitStartPos” a radio 4, también a nivel del suelo
   // ───────────────────────────────────────────────────────
-  const orbitRadius = 4;
+  const orbitRadius = THREE.MathUtils.lerp(3.8, 4.5, Math.random());
   const offsetOrbitStart = new THREE.Vector3(
     Math.cos(angle0) * orbitRadius,
     0,                    // forzamos Y=0 (suelo)
@@ -720,7 +720,7 @@ spawnRabbit() {
   rabbit.traverse((node) => {
     if (node.isMesh) node.castShadow = node.receiveShadow = true;
   });
-  rabbit.scale.setScalar(0.5);
+  rabbit.scale.setScalar(0.2);
   // Ajuste de orientación para que mire en la dirección correcta
   rabbit.rotation.y = Math.PI;
 
@@ -744,7 +744,7 @@ spawnRabbit() {
   );
   rabbit.position.copy(spawnPos);
 
-  const orbitRadius = 3;
+  const orbitRadius = THREE.MathUtils.lerp(2.5, 3.5, Math.random());
   const offsetOrbitStart = new THREE.Vector3(
     Math.cos(angle0) * orbitRadius,
     0,
