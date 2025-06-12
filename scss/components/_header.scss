@@ -24,6 +24,12 @@
   gap: 1rem;
 }
 
+.season-info {
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--text-light);
+}
+
 /* Cada recurso individual */
 .resource {
   display: flex;
