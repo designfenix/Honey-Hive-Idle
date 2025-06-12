@@ -67,10 +67,12 @@ export class GameManager {
     this.baseWaspCost = 100;
     this.waspCostRate = 2;
     this.waspPollenPerSec = 0.5;
-    this.duckPollenPerSec = 2;
-    this.baseRabbitCost = 200;
-    this.rabbitCostRate = 1.25;
-    this.rabbitNectarPerSec = 1;
+    this.baseDuckCost = 1000;
+    this.duckCostRate = 1.35;
+    this.duckPollenPerSec = 4;
+    this.baseRabbitCost = 1500;
+    this.rabbitCostRate = 1.4;
+    this.rabbitNectarPerSec = 1.5;
 
     this.baseRates = {
       nectarPerBee: 1,
@@ -172,7 +174,7 @@ export class GameManager {
 
   _calcDuckCost() {
     const d = this.ducks.length;
-    return Math.ceil(50 * Math.pow(1.2, d));
+    return Math.ceil(this.baseDuckCost * Math.pow(this.duckCostRate, d));
   }
 
   _calcRabbitCost() {

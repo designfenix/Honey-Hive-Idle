@@ -49,10 +49,10 @@ export const upgradeConfig = [
     icon: 'assets/images/icon-duck.png',
     costIcon: 'assets/images/icon-polen.png',
     name: 'Hire Duck',
-    description: 'Generates 2 pollen/s',
+    description: 'Generates 4 pollen/s',
     costResource: 'pollen',
     showAmount: true,
-    levelReq: 10
+    levelReq: 12
   },
   {
     type: 'conejo',
@@ -60,9 +60,9 @@ export const upgradeConfig = [
     icon: 'assets/images/icon-rabbit.png',
     costIcon: 'assets/images/icon-polen.png',
     name: 'Hire Rabbit',
-    description: 'Generates 1 nectar/s',
+    description: 'Generates 1.5 nectar/s',
     costResource: 'pollen',
     showAmount: true,
-    levelReq: 12
+    levelReq: 15
   }
 ];
