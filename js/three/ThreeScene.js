@@ -3,11 +3,7 @@
 import * as THREE from "https://esm.sh/three@0.174.0";
 import { OrbitControls } from "https://esm.sh/three@0.174.0/examples/jsm/controls/OrbitControls.js";
 import * as SkeletonUtils from "https://esm.sh/three@0.174.0/examples/jsm/utils/SkeletonUtils.js";
-import { EffectComposer } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/RenderPass.js";
-import { BokehPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/BokehPass.js";
-import { ShaderPass } from "https://esm.sh/three@0.174.0/examples/jsm/postprocessing/ShaderPass.js";
-import { GammaCorrectionShader } from "https://esm.sh/three@0.174.0/examples/jsm/shaders/GammaCorrectionShader.js";
+import { PostProcessingManager } from "./postprocessing/PostProcessingManager.js";
 import { PMREMGenerator, HalfFloatType } from "https://esm.sh/three@0.174.0";
 
 import Stats from "https://esm.sh/stats.js@0.17.0";
@@ -140,25 +136,14 @@ export class ThreeScene {
   }
 
   // -----------------------------------
-  // 4. Post-processing (RenderPass, Bokeh, Gamma)
+  // 4. Modular post-processing pipeline
   // -----------------------------------
   _initPostProcessing() {
-    this.composer = new EffectComposer(this.renderer);
-    const renderPass = new RenderPass(this.scene, this.camera);
-    this.composer.addPass(renderPass);
-
-    const bokehParams = {
-      focus: 3,
-      aperture: 0.001,
-      maxblur: 0.01,
-      width: this.containerEl.clientWidth,
-      height: this.containerEl.clientHeight,
-    };
-    const bokehPass = new BokehPass(this.scene, this.camera, bokehParams);
-    this.composer.addPass(bokehPass);
-
-    const gammaPass = new ShaderPass(GammaCorrectionShader);
-    this.composer.addPass(gammaPass);
+    this.rendererEffects = new PostProcessingManager(
+      this.renderer,
+      this.scene,
+      this.camera
+    );
   }
 
   // -----------------------------------
@@ -213,6 +198,13 @@ export class ThreeScene {
       this.renderer.shadowMap.enabled = true;
     }
     this.renderer.setPixelRatio(this.pixelRatio);
+    if (this.rendererEffects) {
+      this.rendererEffects.resize(
+        this.containerEl.clientWidth,
+        this.containerEl.clientHeight,
+        this.pixelRatio
+      );
+    }
   }
 
   // -----------------------------------
@@ -927,9 +919,8 @@ _moveInOrbit(entity, delta, hiveCenter) {
       //this.stats.update();
       this.controls.update();
 
-      // Renderizar escena y post-proceso
-      this.renderer.render(this.scene, this.camera);
-      this.composer.render();
+      // Renderizar escena con el pipeline modular de post-proceso.
+      this.rendererEffects.render(delta);
     };
 
     renderFrame();
@@ -969,10 +960,10 @@ _moveInOrbit(entity, delta, hiveCenter) {
   // 21. Ajustar tamaño al cambiar ventana
   // -----------------------------------
   _onResize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = this.containerEl.clientWidth || window.innerWidth;
+    const h = this.containerEl.clientHeight || window.innerHeight;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h, false);
+    this.rendererEffects.resize(w, h, this.pixelRatio);
   }
 }
