@@ -37,6 +37,8 @@ export class ThreeScene {
 
     // Parámetro dinámico para velocidad de colmena (se reasigna desde GameManager)
     this.hiveSpeedMultiplierFunc = () => 1;
+    this.isIntroAnimating = false;
+    this.zoomTween = null;
 
     // 1. Inicializar renderer y canvas
     this._initRenderer();
@@ -133,10 +135,60 @@ export class ThreeScene {
     this.camera.updateProjectionMatrix();
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableZoom = true;
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.08;
+    this.controls.enableZoom = false;
     this.controls.minDistance = 3;
     this.controls.enablePan = false;
     this.controls.maxPolarAngle = Math.PI / 2;
+
+    this.renderer.domElement.addEventListener(
+      "wheel",
+      (event) => this._handleSmoothZoom(event),
+      { passive: false }
+    );
+  }
+
+  _handleSmoothZoom(event) {
+    event.preventDefault();
+
+    if (this.isIntroAnimating || !this.controls.enabled) return;
+
+    const offset = this.camera.position.clone().sub(this.controls.target);
+    const currentDistance = offset.length();
+    const zoomDirection = event.deltaY > 0 ? 1 : -1;
+    const zoomFactor = 1 + zoomDirection * 0.18;
+    const maxDistance = Number.isFinite(this.controls.maxDistance)
+      ? this.controls.maxDistance
+      : currentDistance * 3;
+    const targetDistance = THREE.MathUtils.clamp(
+      currentDistance * zoomFactor,
+      this.controls.minDistance,
+      maxDistance
+    );
+
+    if (Math.abs(targetDistance - currentDistance) < 0.01) return;
+
+    const direction = offset.normalize();
+    const zoomState = { distance: currentDistance };
+    this.zoomTween?.kill();
+    this.zoomTween = gsap.to(zoomState, {
+      distance: targetDistance,
+      duration: 0.45,
+      delay: 0.03,
+      ease: "power3.out",
+      overwrite: true,
+      onUpdate: () => {
+        this.camera.position.copy(this.controls.target).addScaledVector(
+          direction,
+          zoomState.distance
+        );
+        this.controls.update();
+      },
+      onComplete: () => {
+        this.zoomTween = null;
+      },
+    });
   }
 
   // -----------------------------------
@@ -939,6 +991,17 @@ _moveInOrbit(entity, delta, hiveCenter) {
   // 20. Animación de “playGame”: mover cámara al punto inicial
   // -----------------------------------
   playGameAnimation() {
+    this.isIntroAnimating = true;
+    this.controls.enabled = false;
+    this.zoomTween?.kill();
+    this.zoomTween = null;
+
+    const unlockControls = () => {
+      this.isIntroAnimating = false;
+      this.controls.enabled = true;
+      this.controls.maxDistance = 7;
+    };
+
     // Se asume que GSAP está disponible globalmente
     gsap.to(this.camera.position, {
       x: -1.12,
@@ -959,9 +1022,7 @@ _moveInOrbit(entity, delta, hiveCenter) {
       ease: "power2.out",
       duration: 5,
       onUpdate: () => this.camera.updateProjectionMatrix(),
-      onComplete: () => {
-        this.controls.maxDistance = 7;
-      },
+      onComplete: unlockControls,
     });
   }
 
