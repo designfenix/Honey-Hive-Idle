@@ -79,6 +79,16 @@ export class GameManager {
       pollenRatio: 0.2,
     };
 
+    this.seasons = [
+      { name: "Primavera", multiplier: 1.1 },
+      { name: "Verano", multiplier: 1.2 },
+      { name: "Otoño", multiplier: 0.9 },
+      { name: "Invierno", multiplier: 0.8 },
+    ];
+    this.currentSeasonIndex = 0;
+    this.seasonDuration = options.seasonDuration || 60000;
+    this._seasonTimer = null;
+
 
     // Configuramos el hiveSpeedMultiplier en ThreeScene
     // Equivalente a: 1 + this.hiveLevel * 0.05
@@ -97,6 +107,7 @@ export class GameManager {
     this._updateCardLocks();
 
     this._saveTimer = null;
+    this._startSeasonCycle();
   }
 
   _createCard(type) {
@@ -231,6 +242,16 @@ export class GameManager {
     }
   }
 
+  _startSeasonCycle() {
+    if (this._seasonTimer) return;
+    this._seasonTimer = setInterval(() => this._nextSeason(), this.seasonDuration);
+  }
+
+  _nextSeason() {
+    this.currentSeasonIndex = (this.currentSeasonIndex + 1) % this.seasons.length;
+    this._updateAllUI();
+  }
+
   // -------------------------------------------------
   // Lógica de compra (cada método actualiza estado, reproduce SFX y llama a updateAll)
   // -------------------------------------------------
@@ -332,7 +353,8 @@ export class GameManager {
       speedPercent,
       this.userLevel,
       levelReq,
-      levelProgress
+      levelProgress,
+      this.seasons[this.currentSeasonIndex].name
     );
 
     // 2. Refrescar cada UpgradeCard con su coste, valor y si se puede pagar:
@@ -386,27 +408,29 @@ export class GameManager {
     // 1) Guardamos el valor inicial para calcular polen generado en este ciclo
     const pollenBefore = this.pollen;
 
+    const seasonMultiplier = this.seasons[this.currentSeasonIndex].multiplier;
+
     // 2) Polén base por abejas “libres”
-    this.pollen += this.bees.length * delta;
+    this.pollen += this.bees.length * delta * seasonMultiplier;
 
     // 3) Néctar y polen derivado (según prodLevel y hive speed)
     const nectarRate =
       this.bees.length *
       this._nectarPerBee() *
       (1 + this.hiveLevel * 0.05);
-    this.nectar += nectarRate * delta;
-    this.pollen += nectarRate * this.baseRates.pollenRatio * delta;
+    this.nectar += nectarRate * delta * seasonMultiplier;
+    this.pollen += nectarRate * this.baseRates.pollenRatio * delta * seasonMultiplier;
 
     // 3b) Néctar extra por conejos
     const rabbitNectar = this.rabbits.length * this.rabbitNectarPerSec;
-    this.nectar += rabbitNectar * delta;
-    this.pollen += rabbitNectar * this.baseRates.pollenRatio * delta;
+    this.nectar += rabbitNectar * delta * seasonMultiplier;
+    this.pollen += rabbitNectar * this.baseRates.pollenRatio * delta * seasonMultiplier;
 
     // 4) Polén extra por avispas
-    this.pollen += this.wasps.length * this.waspPollenPerSec * delta;
+    this.pollen += this.wasps.length * this.waspPollenPerSec * delta * seasonMultiplier;
 
     // 5) Polén extra por patos
-    this.pollen += this.ducks.length * this.duckPollenPerSec * delta;
+    this.pollen += this.ducks.length * this.duckPollenPerSec * delta * seasonMultiplier;
 
     // Cantidad total generada en este ciclo (solo suma si es positiva)
     const produced = this.pollen - pollenBefore;

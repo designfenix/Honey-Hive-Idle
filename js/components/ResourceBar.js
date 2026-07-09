@@ -21,6 +21,7 @@ export class ResourceBar {
     this.levelEl = getElement("#user-level");
     this.levelFillEl = getElement("#level-bar-fill");
     this.levelProgressTextEl = getElement("#level-progress-text");
+    this.seasonEl = getElement("#season-name");
   }
 
   /**
@@ -32,7 +33,15 @@ export class ResourceBar {
    * @param {number} levelRequirement - polen total necesario para el siguiente nivel
    * @param {number} levelPollen - polen acumulado desde que se alcanzó el nivel actual
    */
-  refresh(pollen, nectar, speedPercent, userLevel, levelRequirement, levelPollen) {
+  refresh(
+    pollen,
+    nectar,
+    speedPercent,
+    userLevel,
+    levelRequirement,
+    levelPollen,
+    seasonName
+  ) {
     this.pollenEl.textContent = formatNumber(Math.floor(pollen));
     this.nectarEl.textContent = formatNumber(Math.floor(nectar));
     this.speedEl.textContent = formatNumber(Math.round(speedPercent));
@@ -47,6 +56,10 @@ export class ResourceBar {
       this.levelProgressTextEl.textContent = `${formatNumber(
         Math.floor(levelPollen)
       )} / ${formatNumber(levelRequirement)}`;
+    }
+
+    if (seasonName !== undefined) {
+      this.seasonEl.textContent = seasonName;
     }
   }
 }
