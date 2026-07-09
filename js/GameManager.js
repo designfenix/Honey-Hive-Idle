@@ -79,6 +79,21 @@ export class GameManager {
       pollenRatio: 0.2,
     };
 
+    // ----- Seasons -----
+    this.seasons = ["Spring", "Summer", "Autumn", "Winter"];
+    this.seasonMultipliers = {
+      Spring: 1.2,
+      Summer: 1.1,
+      Autumn: 0.9,
+      Winter: 0.75,
+    };
+    this.seasonDuration = 120; // seconds per season
+    this.currentSeasonIndex = 0;
+    this.seasonTime = 0;
+
+    // Timekeeper for lifetimes and seasons
+    this.currentTime = 0;
+
 
     // Configuramos el hiveSpeedMultiplier en ThreeScene
     // Equivalente a: 1 + this.hiveLevel * 0.05
@@ -190,6 +205,23 @@ export class GameManager {
     return Math.ceil(1200 * Math.pow(2, this.hiveLevel));
   }
 
+  // Duración de vida de cada entidad (en segundos)
+  _beeLifetime() {
+    return 60 + Math.random() * 60; // 1–2 minutos
+  }
+
+  _waspLifetime() {
+    return 100 + Math.random() * 60; // ~1.5–2.6 minutos
+  }
+
+  _duckLifetime() {
+    return 150 + Math.random() * 90; // 2.5–4 minutos
+  }
+
+  _rabbitLifetime() {
+    return 120 + Math.random() * 120; // 2–4 minutos
+  }
+
   _nectarPerBee() {
     return this.baseRates.nectarPerBee * (1 + this.prodLevel * 0.1);
   }
@@ -231,6 +263,22 @@ export class GameManager {
     }
   }
 
+  _removeExpiredEntities() {
+    const check = (arr) => {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        const ent = arr[i];
+        if (ent.userData.deathTime && ent.userData.deathTime <= this.currentTime) {
+          this.threeScene.scene.remove(ent);
+          arr.splice(i, 1);
+        }
+      }
+    };
+    check(this.bees);
+    check(this.wasps);
+    check(this.ducks);
+    check(this.rabbits);
+  }
+
   // -------------------------------------------------
   // Lógica de compra (cada método actualiza estado, reproduce SFX y llama a updateAll)
   // -------------------------------------------------
@@ -241,6 +289,7 @@ export class GameManager {
 
     // Pedimos a ThreeScene que cree la abeja en 3D
     const beeEntity = this.threeScene.spawnBee();
+    beeEntity.userData.deathTime = this.currentTime + this._beeLifetime();
     this.bees.push(beeEntity);
 
     this._updateAllUI();
@@ -253,6 +302,7 @@ export class GameManager {
     this.pollen -= cost;
 
     const waspEntity = this.threeScene.spawnWasp();
+    waspEntity.userData.deathTime = this.currentTime + this._waspLifetime();
     this.wasps.push(waspEntity);
 
     this._updateAllUI();
@@ -265,6 +315,7 @@ export class GameManager {
     this.pollen -= cost;
 
     const duckEntity = this.threeScene.spawnDuck();
+    duckEntity.userData.deathTime = this.currentTime + this._duckLifetime();
     this.ducks.push(duckEntity);
 
     this._updateAllUI();
@@ -277,6 +328,7 @@ export class GameManager {
     this.pollen -= cost;
 
     const rabbitEntity = this.threeScene.spawnRabbit();
+    rabbitEntity.userData.deathTime = this.currentTime + this._rabbitLifetime();
     this.rabbits.push(rabbitEntity);
 
     this._updateAllUI();
@@ -326,13 +378,17 @@ export class GameManager {
     const speedPercent = (1 + this.hiveLevel * 0.05) * 100;
     const levelReq = this._levelRequirement(this.userLevel);
     const levelProgress = this.pollenLifetime - this.levelStartPollen;
+    const seasonName = this.seasons[this.currentSeasonIndex];
+    const seasonProgress = this.seasonTime / this.seasonDuration;
     this.resourceBar.refresh(
       this.pollen,
       this.nectar,
       speedPercent,
       this.userLevel,
       levelReq,
-      levelProgress
+      levelProgress,
+      seasonName,
+      seasonProgress
     );
 
     // 2. Refrescar cada UpgradeCard con su coste, valor y si se puede pagar:
@@ -383,30 +439,43 @@ export class GameManager {
   // Producción de recursos cada frame (llamado por ThreeScene)
   // -------------------------------------------------
   productionLoop(delta) {
+    this.currentTime += delta;
+    this.seasonTime += delta;
+
+    if (this.seasonTime >= this.seasonDuration) {
+      this.seasonTime = 0;
+      this.currentSeasonIndex = (this.currentSeasonIndex + 1) % this.seasons.length;
+    }
+
+    this._removeExpiredEntities();
+
     // 1) Guardamos el valor inicial para calcular polen generado en este ciclo
     const pollenBefore = this.pollen;
 
     // 2) Polén base por abejas “libres”
-    this.pollen += this.bees.length * delta;
+    const seasonMult =
+      this.seasonMultipliers[this.seasons[this.currentSeasonIndex]] || 1;
+    this.pollen += this.bees.length * delta * seasonMult;
 
     // 3) Néctar y polen derivado (según prodLevel y hive speed)
     const nectarRate =
       this.bees.length *
       this._nectarPerBee() *
       (1 + this.hiveLevel * 0.05);
-    this.nectar += nectarRate * delta;
-    this.pollen += nectarRate * this.baseRates.pollenRatio * delta;
+    this.nectar += nectarRate * delta * seasonMult;
+    this.pollen += nectarRate * this.baseRates.pollenRatio * delta * seasonMult;
 
     // 3b) Néctar extra por conejos
     const rabbitNectar = this.rabbits.length * this.rabbitNectarPerSec;
-    this.nectar += rabbitNectar * delta;
-    this.pollen += rabbitNectar * this.baseRates.pollenRatio * delta;
+    this.nectar += rabbitNectar * delta * seasonMult;
+    this.pollen +=
+      rabbitNectar * this.baseRates.pollenRatio * delta * seasonMult;
 
     // 4) Polén extra por avispas
-    this.pollen += this.wasps.length * this.waspPollenPerSec * delta;
+    this.pollen += this.wasps.length * this.waspPollenPerSec * delta * seasonMult;
 
     // 5) Polén extra por patos
-    this.pollen += this.ducks.length * this.duckPollenPerSec * delta;
+    this.pollen += this.ducks.length * this.duckPollenPerSec * delta * seasonMult;
 
     // Cantidad total generada en este ciclo (solo suma si es positiva)
     const produced = this.pollen - pollenBefore;
@@ -467,10 +536,19 @@ export class GameManager {
     const spawn = (count, fn) => {
       for (let i = 0; i < count; i++) {
         const ent = fn.call(this.threeScene);
-        if (fn === this.threeScene.spawnBee) this.bees.push(ent);
-        else if (fn === this.threeScene.spawnWasp) this.wasps.push(ent);
-        else if (fn === this.threeScene.spawnDuck) this.ducks.push(ent);
-        else if (fn === this.threeScene.spawnRabbit) this.rabbits.push(ent);
+        if (fn === this.threeScene.spawnBee) {
+          ent.userData.deathTime = this.currentTime + this._beeLifetime();
+          this.bees.push(ent);
+        } else if (fn === this.threeScene.spawnWasp) {
+          ent.userData.deathTime = this.currentTime + this._waspLifetime();
+          this.wasps.push(ent);
+        } else if (fn === this.threeScene.spawnDuck) {
+          ent.userData.deathTime = this.currentTime + this._duckLifetime();
+          this.ducks.push(ent);
+        } else if (fn === this.threeScene.spawnRabbit) {
+          ent.userData.deathTime = this.currentTime + this._rabbitLifetime();
+          this.rabbits.push(ent);
+        }
       }
     };
     spawn(state.bees || 0, this.threeScene.spawnBee);
